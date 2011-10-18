@@ -249,7 +249,7 @@ function pmpron_new_blogs_settings($blog_id)
 }
 
 //actions
-add_action('wpmu_new_blog', 'wls_new_blogs_settings');
+add_action('wpmu_new_blog', 'pmpron_new_blogs_settings');
 
 /*
 	Update the confirmation message to show links to the new site.
