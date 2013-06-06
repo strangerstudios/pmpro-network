@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, network sites, wpmu
 Requires at least: 3.0
-Tested up to: 3.2.1
-Stable tag: .1
+Tested up to: 3.5.1
+Stable tag: .2
 
 Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found int he WordPress repository.
 
@@ -29,6 +29,8 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .2 =
+* Storing some vars in $_SESSION for when using PayPal Express or other offsite payment processors.
 
 = .1 =
 * Initial version.

@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro Network Site Helper
 Plugin URI: http://www.paidmembershipspro.com/network-sites/
 Description: Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
-Version: .1
+Version: .2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -20,8 +20,16 @@ function pmpron_pmpro_checkout_boxes()
 {
 	global $current_user, $wpdb;
 	
-	$sitename = $_REQUEST['sitename'];
-	$sitetitle = $_REQUEST['sitetitle']; 
+	if(!empty($_REQUEST['sitename']))
+	{
+		$sitename = $_REQUEST['sitename'];
+		$sitetitle = $_REQUEST['sitetitle']; 
+	}
+	elseif(!empty($_SESSION['sitename']))
+	{
+		$sitename = $_SESSION['sitename'];
+		$sitetitle = $_SESSION['sitetitle']; 
+	}
 ?>
 	<table id="pmpro_site_fields" class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
@@ -93,9 +101,18 @@ function pmpron_update_site_after_checkout($user_id)
 {
 	global $current_user, $current_site;
 	
-	$sitename = $_REQUEST['sitename'];
-	$sitetitle = $_REQUEST['sitetitle'];
-	$blog_id = $_REQUEST['blog_id'];
+	if(isset($_REQUEST['sitename']))
+	{   
+		$sitename = $_REQUEST['sitename'];
+		$sitetitle = $_REQUEST['sitetitle'];
+		$blog_id = $_REQUEST['blog_id'];
+	}
+	elseif(isset($_SESSION['sitename']))
+	{   
+		$sitename = $_SESSION['sitename'];
+		$sitetitle = $_SESSION['sitetitle'];
+		$blog_id = $_SESSION['blog_id'];
+	}		
 	
 	if($blog_id)
 	{
@@ -142,8 +159,25 @@ function pmpron_update_site_after_checkout($user_id)
 
 		do_action('wpmu_activate_blog', $blog_id, $current_user->ID, $current_user->user_pass, $sitetitle, $meta);
 	}
+	
+	//clear session vars
+	unset($_SESSION['sitename']);
+	unset($_SESSION['sitetitle']);
+	unset($_SESSION['blog_id']);
 }
 add_action('pmpro_after_checkout', 'pmpron_update_site_after_checkout');
+
+/*
+These bits are required for PayPal Express only.
+*/
+function pmpron_pmpro_paypalexpress_session_vars()
+{
+	//save our added fields in session while the user goes off to PayPal
+	$_SESSION['sitename'] = $_REQUEST['sitename'];
+	$_SESSION['sitetitle'] = $_REQUEST['sitetitle'];
+	$_SESSION['blog_id'] = $_REQUEST['blog_id'];
+}
+add_action("pmpro_paypalexpress_session_vars", "pmpron_pmpro_paypalexpress_session_vars");
 
 //require the fields and check for dupes
 function pmpron_pmpro_registration_checks()
