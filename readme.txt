@@ -31,6 +31,7 @@ Please visit our premium support site at http://www.paidmembershipspro.com for m
 == Changelog ==
 = .2 =
 * Storing some vars in $_SESSION for when using PayPal Express or other offsite payment processors.
+* Fixed wp-admin link to new site dashboard on confirmation page.
 
 = .1 =
 * Initial version.

@@ -300,7 +300,7 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 		//get the site address
 		$address = "http://" . $wpdb->get_var("SELECT CONCAT(domain, path) FROM $wpdb->blogs WHERE blog_id = '" . $blog_id . "' LIMIT 1");
 		$message .= "<p>Visit your new site here: <a href=\"" . $address . "\">" . $address . "</a></p>";
-		$message .= "<p>Manage your new site here: <a href=\"" . $address . "\">" . $address . "wp-admin/</a></p>";
+		$message .= "<p>Manage your new site here: <a href=\"" . $address . "wp-admin/\">" . $address . "wp-admin/</a></p>";
 	}
 
 	return $message;
