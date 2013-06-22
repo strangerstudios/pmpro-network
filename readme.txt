@@ -5,7 +5,7 @@ Requires at least: 3.0
 Tested up to: 3.5.1
 Stable tag: .2
 
-Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found int he WordPress repository.
+Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
 
 == Description ==
 
@@ -15,7 +15,7 @@ With the Paid Memberships Pro plugin and this plugin activated, new users will b
 
 1. Make sure you have the Paid Memberships Pro plugin installed and activated.
 1. Make sure you have properly configured Network Sites on your WP install.
-1. Upload the `pmpro-netowrk` directory to the `/wp-content/plugins/` directory of your site.
+1. Upload the `pmpro-network` directory to the `/wp-content/plugins/` directory of your site.
 1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Frequently Asked Questions ==
