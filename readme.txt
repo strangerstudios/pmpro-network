@@ -29,6 +29,11 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .3 =
+* Added ability for users to register multiple sites on the network. Storing blog ids in pmpron_blog_ids user meta. The pmpron_blog_id (no s) meta value will still hold the first site created. Create a page with the [pmpron_manage_sites] shortcode on it to create the page to add new sites; use the pmpron_site_credits filter to change the number of site credits given to users signing up.
+* Abstracted some of the code around site creation.
+* Fixed a potential bug with the check to see if a sitename was already taken.
+
 = .2 =
 * Storing some vars in $_SESSION for when using PayPal Express or other offsite payment processors.
 * Fixed wp-admin link to new site dashboard on confirmation page.
