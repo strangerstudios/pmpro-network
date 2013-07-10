@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, network sites, wpmu
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: .2
+Stable tag: .3
 
 Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
 

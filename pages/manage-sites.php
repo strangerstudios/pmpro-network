@@ -78,59 +78,110 @@
 		}
 		
 		//show page		
-		$blog_ids = pmpron_getBlogsForUser($current_user->ID);	
+		$blog_ids = pmpron_getBlogsForUser($current_user->ID);			
 		?>
-		<p>
-			You have used <?php echo count($blog_ids);?> of <?php echo intval($current_user->pmpron_site_credits);?> site credits.			
+		<p class="pmpro_message <?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>pmpro_error<?php } ?>">
+			<?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>
+				You have used <?php echo intval($current_user->pmpron_site_credits); ?> of <?php echo intval($current_user->pmpron_site_credits);?> site credits.
+				<?php if(count($blog_ids) > intval($current_user->pmpron_site_credits)) { ?>
+					<?php echo (count($blog_ids) - intval($current_user->pmpron_site_credits)); ?> of your sites have been deactivated.
+				<?php } ?> 
+			<?php } else { ?>
+				You have used <?php echo count($blog_ids);?> of <?php echo intval($current_user->pmpron_site_credits);?> site credits.
+			<?php } ?>
 		</p>
 		
-		<hr />
-		
 		<?php if($current_user->pmpron_site_credits > count($blog_ids)) { ?>
-		<h3>Add a Site</h3>
-		<?php if(!empty($pmpro_msg)) { ?>
-			<p class="pmpro_message <?php echo $pmpro_msgt;?>"><?php echo $pmpro_msg;?></p>
-		<?php } ?>
-		<form action="" method="post">
-			<p>
-				<label for="sitename"><?php _e('Site Name') ?></label>
-				<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" />				
-				<?php
-					global $current_site;
-					$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
-				
-					if ( !is_subdomain_install() )
-						$site = $current_site->domain . $current_site->path . __( 'sitename' );
-					else
-						$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
-
-					echo '<div>(<strong>' . sprintf( __('Your address will be %s.'), $site ) . '</strong>) ' . __( 'Must be at least 4 characters, letters and numbers only. It cannot be changed, so choose carefully!' ) . '</div>';						
-				?>
-			</p>
-			<p>
-				<label for="sitetitle"><?php _e('Site Title')?></label>
-				<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" />
-			</p>
-			<p>
-				<input type="hidden" name="addsite" value="1" />
-				<input type="submit" name="submit" value="Add Site" />
-			</p>
-		</form>
-		
-		<hr />
-		<?php } ?>
-		
-		<h3>Your Sites</h3>		
-		<ul>
-			<?php foreach($blog_ids as $blog_id) { ?>
-				<li>
-					<a href="<?php echo get_site_url($blog_id);?>"><?php echo get_blog_option($blog_id, "blogname");?></a>
-					<?php if(get_blog_status($blog_id, "deleted")) { ?>
-						(deactivated)
+		<form class="pmpro_form" action="" method="post">
+			<table id="pmpro_add_site" class="pmpro_checkout" width="100%" cellpadding="0" cellspacing="0" border="0">
+			<thead>
+				<tr>
+					<th>Add a Site</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>	
+					<?php if(!empty($pmpro_msg)) { ?>
+						<p class="pmpro_message <?php echo $pmpro_msgt;?>"><?php echo $pmpro_msg;?></p>
 					<?php } ?>
-				</li>
+					<div>
+						<label for="sitename"><?php _e('Site Name') ?></label>
+						<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" />				
+						<?php
+							global $current_site;
+							$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
+						
+							if ( !is_subdomain_install() )
+								$site = $current_site->domain . $current_site->path . __( 'sitename' );
+							else
+								$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
+		
+							echo '<div class="leftmar"><strong>' . sprintf( __('Your address will be %s.'), $site ) . '</strong><br />' . __( 'Must be at least 4 characters, letters and numbers only. It cannot be changed, so choose carefully!' ) . '</div>';						
+						?>
+					</div>
+					<div>
+						<label for="sitetitle"><?php _e('Site Title')?></label>
+						<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" />
+					</div>
+					<div class="leftmar">
+						<input type="hidden" name="addsite" value="1" />
+						<input type="submit" name="submit" value="Add Site" />
+					</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		</form>
+
+		<?php } ?>
+		
+		<h3>Your Sites</h3>
+		<table id="pmpro_add_site" class="pmpro_checkout" width="100%" cellpadding="0" cellspacing="0" border="0">
+			<thead>
+				<tr>
+					<th><?php _e('Name') ?></th>
+					<th><?php _e('Options') ?></th>
+				</tr>
+			</thead>
+			<tbody>	
+			<?php foreach($blog_ids as $blog_id) { ?>
+				<tr<?php if(get_blog_status($blog_id, "deleted")) { ?> class="pmpro_disabled"<?php } ?>>
+					<td>
+						<?php 
+							if(get_blog_status($blog_id, "deleted")) 
+							{
+								echo get_blog_option($blog_id, "blogname");
+							}
+							else
+							{
+								?>
+								<a href="<?php echo get_site_url($blog_id);?>"><?php echo get_blog_option($blog_id, "blogname");?></a><br />
+								<?php echo get_site_url($blog_id);?>
+								<?php
+							}
+						?>										
+					</td>
+					<td>					
+						<?php 
+							if(get_blog_status($blog_id, "deleted")) 
+							{ 
+								?>
+								<?php _e('(deactivated)') ?>
+								<?php 
+							} 
+							else
+							{
+								?>
+								<a href="<?php echo get_site_url($blog_id);?>/wp-admin/"><?php _e('Dashboard') ?></a>&nbsp;|&nbsp;<a href="<?php echo get_site_url($blog_id, "/wp-admin/post-new.php"); ?>"><?php _e('New Post') ?></a>&nbsp;|&nbsp;<a href="<?php echo get_site_url($blog_id, "/wp-admin/edit-comments.php"); ?>"><?php _e('Manage Comments') ?></a>&nbsp;|&nbsp;<a href="<?php echo get_site_url($blog_id);?>"><?php _e('Visit Site') ?></a>
+								<?php
+							}
+						?>
+					</td>
+				</tr>
 			<?php } ?>
-		</ul>
+			</tbody>
+		</table>
 		<?php
 		$temp_content = ob_get_contents();
 		ob_end_clean();

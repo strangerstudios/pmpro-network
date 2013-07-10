@@ -169,37 +169,29 @@ function pmpron_update_site_after_checkout($user_id)
 			return $blog_id;
 	}
 	
-	//set site credits		
-	$site_credits = apply_filters("pmpron_site_credits", 1, $user_id);	//use this filter to give certain users/levels different # of site credits
-	update_user_meta($user_id, "pmpron_site_credits", $site_credits);
-	
-	//activate user's blogs based on number of site credits they have
-	$blog_ids = pmpron_getBlogsForUser($user_id);	
-	$n = 0;
-	foreach($blog_ids as $blog_id)
-	{
-		$n++;
-		
-		if($site_credits >= $n)
-		{
-			//as long as site_credits > $n, let's make sure this blog is active
-			update_blog_status( $blog_id, 'deleted', '0' );
-			do_action( 'activate_blog', $blog_id );
-		}
-		else
-		{		
-			//site credits < $n, so let's deactivate blogs from now on
-			do_action( 'deactivate_blog', $blog_id );
-			update_blog_status( $blog_id, 'deleted', '1' );
-		}
-	}
-	
 	//clear session vars
 	unset($_SESSION['sitename']);
 	unset($_SESSION['sitetitle']);
 	unset($_SESSION['blog_id']);
 }
 add_action('pmpro_after_checkout', 'pmpron_update_site_after_checkout');
+
+/*
+	Add "manage sites" link to member links
+*/
+function pmpron_pmpro_member_links_top()
+{	
+	global $current_user;
+	$credits = $current_user->pmpron_site_credits;
+	$manage_post = get_page_by_path(PMPRO_NETWORK_MANAGE_SITES_SLUG);
+	if(!empty($credits) && !empty($manage_post))
+	{
+		?>
+		<li><a href="<?php echo home_url(PMPRO_NETWORK_MANAGE_SITES_SLUG);?>"><?php _e('Manage Sites') ?></a></li>
+		<?php
+	}	
+}
+add_filter("pmpro_member_links_top", "pmpron_pmpro_member_links_top");
 
 /*
 	Function to add a site.
@@ -231,16 +223,17 @@ function pmpron_addSite($sitename, $sitetitle)
 	if ( is_a($blog_id, "WP_Error") ) {
 		return new WP_Error('blogcreate_failed', __('<strong>ERROR</strong>: Site creation failed.'));
 	}
-
-	//save the blog id in user meta for access later
-	update_user_meta($current_user->ID, "pmpron_blog_id", $blog_id);
-	
+			
 	//save array of all blog ids
-	$blog_ids = pmpron_getBlogsForUser($current_user->ID);
+	$blog_ids = pmpron_getBlogsForUser($current_user->ID);	
 	if(!in_array($blog_id, $blog_ids))
 	{
 		$blog_ids[] = $blog_id;
 		update_user_meta($current_user->ID, "pmpron_blog_ids", $blog_ids);
+		
+		//if this is the first site, set it as the main site
+		if(count($blog_ids) == 1)
+			update_user_meta($current_user->ID, "pmpron_blog_id", $blog_id);	
 	}				
 	
 	do_action('wpmu_activate_blog', $blog_id, $current_user->ID, $current_user->user_pass, $sitetitle, $meta);
@@ -408,23 +401,37 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 add_filter("pmpro_confirmation_message", "pmpron_pmpro_confirmation_message", 10, 2);
 
 /*
-	Remove admin access and deactivate a blog when a user's membership level changes.
+	Set site credits, remove admin access and deactivate a blogs when a user's membership level changes.
 */
 function pmpron_pmpro_after_change_membership_level($level, $user_id)
 {
-	//if they don't have a membership, deactivate any site they might have
+	//set site credits		
 	if(!pmpro_hasMembershipLevel(NULL, $user_id))
+		$site_credits = 0;
+	else
+		$site_credits = apply_filters("pmpron_site_credits", 1, $user_id);	//use this filter to give certain users/levels different # of site credits
+	update_user_meta($user_id, "pmpron_site_credits", $site_credits);
+	
+	//activate user's blogs based on number of site credits they have
+	$blog_ids = pmpron_getBlogsForUser($user_id);	
+	$n = 0;
+	foreach($blog_ids as $blog_id)
 	{
-		//find their blogs
-		$blog_ids = pmpron_getBlogsForUser($user_id);
+		$n++;
 		
-		foreach($blog_ids as $blog_id)
+		if($site_credits >= $n)
 		{
-			//deactivate the blog
+			//as long as site_credits > $n, let's make sure this blog is active
+			update_blog_status( $blog_id, 'deleted', '0' );
+			do_action( 'activate_blog', $blog_id );
+		}
+		else
+		{		
+			//site credits < $n, so let's deactivate blogs from now on
 			do_action( 'deactivate_blog', $blog_id );
 			update_blog_status( $blog_id, 'deleted', '1' );
 		}
-	}
+	}		
 }
 add_action("pmpro_after_change_membership_level", "pmpron_pmpro_after_change_membership_level", 10, 2);
 
@@ -436,11 +443,13 @@ function pmpron_getBlogsForUser($user_id)
 	$user = get_userdata($user_id);
 	$main_blog_id = $user->pmpron_blog_id;
 	$all_blog_ids = $user->pmpron_blog_ids;
-	
+		
 	if(!empty($all_blog_ids))
 		return $all_blog_ids;
-	else
+	elseif(!empty($main_blog_id))
 		return array($main_blog_id);
+	else
+		return array();
 }
 
 /*
@@ -463,14 +472,17 @@ function pmpron_myblogs_allblogs_options()
 	{
 		$site_credits = $num;
 		update_user_meta($current_user->ID, "pmpron_site_credits", $site_credits);
-	}
-	
+	}	
 	?>
-	<p>
-		You have used <?php echo $num;?> of <?php echo intval($site_credits);?> site credits.
-		<?php if($site_credits > $num) { ?>
-			<a href="<?php echo home_url(PMPRO_NETWORK_MANAGE_SITES_SLUG);?>">Add a new site</a>.
-		<?php } ?>
+	<p><?php _e('Below is a list of all sites you are an owner or member of.') ?>
+	<?php
+	if(!empty($site_credits))
+	{
+		?>
+		<a href="<?php echo home_url(PMPRO_NETWORK_MANAGE_SITES_SLUG);?>"><?php _e('Click here to Manage Sites you own &raquo;') ?></a>
+		<?php
+	}
+	?>
 	</p>
 	<?php
 }
