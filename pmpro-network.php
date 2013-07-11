@@ -403,13 +403,13 @@ add_filter("pmpro_confirmation_message", "pmpron_pmpro_confirmation_message", 10
 /*
 	Set site credits, remove admin access and deactivate a blogs when a user's membership level changes.
 */
-function pmpron_pmpro_after_change_membership_level($level, $user_id)
-{
+function pmpron_pmpro_after_change_membership_level($level_id, $user_id)
+{	
 	//set site credits		
 	if(!pmpro_hasMembershipLevel(NULL, $user_id))
 		$site_credits = 0;
 	else
-		$site_credits = apply_filters("pmpron_site_credits", 1, $user_id);	//use this filter to give certain users/levels different # of site credits
+		$site_credits = apply_filters("pmpron_site_credits", 1, $user_id, $level_id);	//use this filter to give certain users/levels different # of site credits
 	update_user_meta($user_id, "pmpron_site_credits", $site_credits);
 	
 	//activate user's blogs based on number of site credits they have
@@ -427,9 +427,13 @@ function pmpron_pmpro_after_change_membership_level($level, $user_id)
 		}
 		else
 		{		
-			//site credits < $n, so let's deactivate blogs from now on
-			do_action( 'deactivate_blog', $blog_id );
-			update_blog_status( $blog_id, 'deleted', '1' );
+			//don't deactivate admin sites
+			if(!user_can("manage_network", $user_id))
+			{
+				//site credits < $n, so let's deactivate blogs from now on
+				do_action( 'deactivate_blog', $blog_id );
+				update_blog_status( $blog_id, 'deleted', '1' );			
+			}
 		}
 	}		
 }

@@ -136,6 +136,7 @@
 
 		<?php } ?>
 		
+		<?php if(!empty($blog_ids)) { ?>
 		<h3>Your Sites</h3>
 		<table id="pmpro_add_site" class="pmpro_checkout" width="100%" cellpadding="0" cellspacing="0" border="0">
 			<thead>
@@ -182,6 +183,7 @@
 			<?php } ?>
 			</tbody>
 		</table>
+		<?php } ?>
 		<?php
 		$temp_content = ob_get_contents();
 		ob_end_clean();
