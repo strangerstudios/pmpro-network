@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro Network Site Helper
 Plugin URI: http://www.paidmembershipspro.com/network-sites/
 Description: Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
-Version: .3
+Version: .3.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -491,3 +491,49 @@ function pmpron_myblogs_allblogs_options()
 	<?php
 }
 add_action("myblogs_allblogs_options", "pmpron_myblogs_allblogs_options");
+
+/*
+	Add site credits field to profile for admins to adjust
+*/
+//show fields
+function pmpron_profile_fields($profile_user)
+{	
+	if(current_user_can("manage_network"))
+	{		
+	?>
+		<h3><?php _e("Site Credits"); ?></h3>
+		<table class="form-table">
+		<tr>
+			<th><label for="site_credits"><?php _e("Site Credits"); ?></label></th>
+			<td>
+				<?php
+					//how many sites have they created?	
+					$all_blog_ids = pmpron_getBlogsForUser($profile_user->ID);	
+					$num = count($all_blog_ids);
+						
+					//how many can they create?
+					$site_credits = $profile_user->pmpron_site_credits;						
+				?>
+				<input type="text" id="site_credits" name="site_credits" size="5" value="<?php echo $site_credits; ?>" /> <em>currently using <?php echo $num; ?></em>
+			</td>
+		</tr>
+		</table>
+	<?php
+	}
+}
+add_action('show_user_profile', 'pmpron_profile_fields');
+add_action('edit_user_profile', 'pmpron_profile_fields');
+
+//save fields
+function pmpron_profile_fields_update($user_id)
+{
+	//make sure they can edit
+	if ( !current_user_can( 'manage_network') )
+		return false;
+
+	//if site credits is there, set it
+	if(isset($_POST['site_credits']))
+		update_user_meta( $user_id, 'pmpron_site_credits', $_POST['site_credits'] );	
+}
+add_action('profile_update', 'pmpron_profile_fields_update');
+add_action('user_edit_form_tag', 'pmpron_profile_fields_update');

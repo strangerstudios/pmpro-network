@@ -50,6 +50,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .3.2 =
+* Added "site credits" field to profile for admins to override.
+
 = .3.1 =
 * Won't deactivate sites when changing levels on a network admin.
 * Checking for blog_ids before showing sites table on manage sites page.
