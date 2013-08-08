@@ -219,6 +219,8 @@ function pmpron_addSite($sitename, $sitetitle)
 	//alright create the blog
 	$meta = apply_filters('signup_create_blog_meta', array ('lang_id' => 'en', 'public' => 0));
 	$blog_id = wpmu_create_blog($site, $path, $sitetitle, $current_user->ID, $meta);
+	
+	do_action("pmpro_network_new_site", $blog_id, $current_user->ID);
 
 	if ( is_a($blog_id, "WP_Error") ) {
 		return new WP_Error('blogcreate_failed', __('<strong>ERROR</strong>: Site creation failed.'));
