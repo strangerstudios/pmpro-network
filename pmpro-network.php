@@ -14,6 +14,7 @@ Author URI: http://www.strangerstudios.com
 
 //set these values
 define('PMPRO_NETWORK_MANAGE_SITES_SLUG', '/manage-sites/');	//change to relative path of your manage sites page if you are setting site credits > 1
+$pmpro_network_non_site_levels = array(); // change to level id's that should not create a site: e.g. array('1','2','3')
 
 //includes
 require_once(dirname(__FILE__) . "/pages/manage-sites.php");
@@ -24,8 +25,12 @@ require_once(dirname(__FILE__) . "/pages/manage-sites.php");
 //add the fields to the form 
 function pmpron_pmpro_checkout_boxes() 
 {
-	global $current_user, $wpdb;
-	
+	global $current_user, $wpdb, $pmpro_network_non_site_levels;
+
+	// Return if requested level is in non site levels array
+	if ( in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
+		return;
+
 	if(!empty($_REQUEST['sitename']))
 	{
 		$sitename = $_REQUEST['sitename'];
@@ -256,13 +261,20 @@ function pmpron_pmpro_paypalexpress_session_vars()
 add_action("pmpro_paypalexpress_session_vars", "pmpron_pmpro_paypalexpress_session_vars");
 
 //require the fields and check for dupes
-function pmpron_pmpro_registration_checks()
+function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 {
-	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user;
+	if (!$pmpro_continue_registration)
+		return $pmpro_continue_registration;
+
+	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user, $pmpro_network_non_site_levels;
 	$sitename = $_REQUEST['sitename'];
 	$sitetitle = $_REQUEST['sitetitle'];
 	$blog_id = $_REQUEST['blog_id'];
- 
+
+	// Return if requested level is in non site levels array
+	if ( in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
+		return;
+
 	if($sitename && $sitetitle)
 	{
 		if(pmpron_checkSiteName($sitename))
