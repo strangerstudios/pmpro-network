@@ -273,7 +273,7 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 
 	// Return if requested level is in non site levels array
 	if ( in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
-		return;
+		return $pmpro_continue_registration;
 
 	if($sitename && $sitetitle)
 	{
