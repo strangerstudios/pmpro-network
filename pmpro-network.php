@@ -63,6 +63,8 @@ function pmpron_pmpro_checkout_boxes()
 						$blogname = get_blog_option($blog_id, "blogname");
 					}
 				}
+				else
+					$blogname = "";
 				
 				if($blogname == "many")
 				{
