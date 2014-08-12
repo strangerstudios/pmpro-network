@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, network sites, wpmu
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: .3.1
+Stable tag: .3.2.1
 
 Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
 
@@ -50,6 +50,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .3.2.1 =
+* Fixed some warnings on the checkout page when not logged in.
+
 = .3.2 =
 * Added "site credits" field to profile for admins to override.
 
