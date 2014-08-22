@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro Network Site Helper
 Plugin URI: http://www.paidmembershipspro.com/network-sites/
 Description: Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
-Version: .3.2
+Version: .3.2.1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -41,7 +41,11 @@ function pmpron_pmpro_checkout_boxes()
 		$sitename = $_SESSION['sitename'];
 		$sitetitle = $_SESSION['sitetitle']; 
 	}
-?>
+    else {
+        $sitename = '';
+        $sitetitle = '';
+    }
+    ?>
 	<table id="pmpro_site_fields" class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
@@ -68,25 +72,26 @@ function pmpron_pmpro_checkout_boxes()
 						$blogname = get_blog_option($blog_id, "blogname");
 					}
 				}
-				
-				if($blogname == "many")
-				{
-				?>
-				<div>
-					<p>You will be reclaiming your previous sites.</p>
-					<input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
-				</div>
-				<?php
-				}
-				elseif($blogname)
-				{
-				?>
-				<div>
-					<p>You will be reclaiming your site <strong><?php echo $blogname;?></strong>.</p>
-					<input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
-				</div>
-				<?php
-				}
+				if(!empty($blogname)) {
+                    if($blogname == "many")
+                    {
+                        ?>
+                        <div>
+                            <p>You will be reclaiming your previous sites.</p>
+                            <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
+                        </div>
+                    <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <div>
+                            <p>You will be reclaiming your site <strong><?php echo $blogname;?></strong>.</p>
+                            <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
+                        </div>
+                    <?php
+                    }
+                }
 				else
 				{
 				?>				
