@@ -463,16 +463,48 @@ add_action("pmpro_after_change_membership_level", "pmpron_pmpro_after_change_mem
 */
 function pmpron_getBlogsForUser($user_id)
 {
+
+	pmpron_updateBlogsForUser($user_id);
+
 	$user = get_userdata($user_id);
 	$main_blog_id = $user->pmpron_blog_id;
 	$all_blog_ids = $user->pmpron_blog_ids;
-		
+
 	if(!empty($all_blog_ids))
 		return $all_blog_ids;
 	elseif(!empty($main_blog_id))
 		return array($main_blog_id);
 	else
 		return array();
+}
+
+/*
+ * Update a user's blogs.
+ */
+function pmpron_updateBlogsForUser($user_id) {
+
+	$user = get_userdata($user_id);
+	$main_blog_id = $user->pmpron_blog_id;
+	$all_blog_ids = $user->pmpron_blog_ids;
+
+	if(empty($main_blog_id && empty($all_blog_ids)))
+		return;
+
+	if(!empty($all_blog_ids)) {
+
+		// Make sure they exist
+		foreach($all_blog_ids as $key => $blog_id) {
+			if( ! get_blog_details($blog_id) )
+				unset($all_blog_ids[$key]);
+		}
+
+		// Update user blogs
+		update_user_meta($user_id, 'pmpron_blog_ids', $all_blog_ids);
+	}
+	if(!empty($main_blog_id)) {
+		if( ! get_blog_details($main_blog_id) )
+			delete_user_meta($user_id, 'pmpron_blog_id');
+	}
 }
 
 /*

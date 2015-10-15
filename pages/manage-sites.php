@@ -76,9 +76,10 @@
 			$sitename = "";
 			$sitetitle = "";
 		}
-		
+
 		//show page		
-		$blog_ids = pmpron_getBlogsForUser($current_user->ID);			
+		$blog_ids = pmpron_getBlogsForUser($current_user->ID);
+
 		?>
 		<p class="pmpro_message <?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>pmpro_error<?php } ?>">
 			<?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>
@@ -147,6 +148,7 @@
 			</thead>
 			<tbody>	
 			<?php foreach($blog_ids as $blog_id) { ?>
+				<?php if( ! get_blog_details($blog_id)) continue; ?>
 				<tr<?php if(get_blog_status($blog_id, "deleted")) { ?> class="pmpro_disabled"<?php } ?>>
 					<td>
 						<?php 
