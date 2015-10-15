@@ -16,8 +16,20 @@ Author URI: http://www.strangerstudios.com
 define('PMPRO_NETWORK_MANAGE_SITES_SLUG', '/manage-sites/');	//change to relative path of your manage sites page if you are setting site credits > 1
 $pmpro_network_non_site_levels = array(); // change to level id's that should not create a site: e.g. array('1','2','3')
 
-//includes
-require_once(dirname(__FILE__) . "/pages/manage-sites.php");
+/*
+ * Include Manage Sites page template
+ */
+function pmpron_init() {
+	if ( file_exists( get_stylesheet_directory() . '/paid-memberships-pro/pages/manage-sites.php' ) ) {
+		$template = get_stylesheet_directory() . '/paid-memberships-pro/pages/manage-sites.php';
+	} elseif ( file_exists( get_template_directory() . '/paid-memberships-pro/pages/manage-sites.php' ) ) {
+		$template = get_template_directory() . '/paid-memberships-pro/pages/manage-sites.php';
+	} else {
+		$template = 'pages/manage-sites.php';
+	}
+	require_once($template);
+}
+add_action('init', 'pmpron_init');
 
 /*
 	First we need to add some fields to the checkout page.
