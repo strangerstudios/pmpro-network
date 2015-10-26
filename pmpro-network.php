@@ -499,7 +499,7 @@ function pmpron_updateBlogsForUser($user_id) {
 	$main_blog_id = $user->pmpron_blog_id;
 	$all_blog_ids = $user->pmpron_blog_ids;
 
-	if(empty($main_blog_id && empty($all_blog_ids)))
+	if(empty($main_blog_id) && empty($all_blog_ids))
 		return;
 
 	if(!empty($all_blog_ids)) {
