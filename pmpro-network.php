@@ -27,9 +27,23 @@ function pmpron_pmpro_checkout_boxes()
 {
 	global $current_user, $wpdb, $pmpro_network_non_site_levels;
 
+	$level_id = null;
+
+	// Get the level info
+	if (isset($_REQUEST['level'])) {
+		$level_id = intval($_REQUEST['level']);
+	}
+
 	// Return if requested level is in non site levels array
-	if ( in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
+	if ( !is_null($level_id) && in_array( $level_id, $pmpro_network_non_site_levels ) )
 		return;
+
+	// Return if the site credit for the requested level is 0 or less.
+	$site_credit = apply_filters('', 1, $current_user->ID, $level_id);
+
+	if (0 <= $site_credit) {
+		return;
+	}
 
 	if(!empty($_REQUEST['sitename']))
 	{
