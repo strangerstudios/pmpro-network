@@ -14,7 +14,9 @@ Author URI: http://www.strangerstudios.com
 
 //set these values
 define('PMPRO_NETWORK_MANAGE_SITES_SLUG', '/manage-sites/');	//change to relative path of your manage sites page if you are setting site credits > 1
-$pmpro_network_non_site_levels = array(); // change to level id's that should not create a site: e.g. array('1','2','3')
+
+// change to level id's that should not create a site: e.g. array('1','2','3')
+$pmpro_network_non_site_levels = apply_filters('pmpron_non_site_level_array', array());
 
 //includes
 require_once(dirname(__FILE__) . "/pages/manage-sites.php");
