@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro Network Site Helper
 Plugin URI: http://www.paidmembershipspro.com/network-sites/
 Description: Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
-Version: .3.2
+Version: .3.3.1
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -12,8 +12,12 @@ Author URI: http://www.strangerstudios.com
 	This code is licensed under the GPLv2.
 */
 
-//set these values
+//set these values here or in a custom plugin
+/*
 define('PMPRO_NETWORK_MANAGE_SITES_SLUG', '/manage-sites/');	//change to relative path of your manage sites page if you are setting site credits > 1
+global $pmpro_network_non_site_levels;
+$pmpro_network_non_site_levels = array(1,2,3,4,5,7,9); // change to level id's that should not create a site: e.g. array('1','2','3')
+*/
 
 //includes
 require_once(dirname(__FILE__) . "/pages/manage-sites.php");
@@ -24,8 +28,12 @@ require_once(dirname(__FILE__) . "/pages/manage-sites.php");
 //add the fields to the form 
 function pmpron_pmpro_checkout_boxes() 
 {
-	global $current_user, $wpdb;
-	
+	global $current_user, $wpdb, $pmpro_network_non_site_levels;
+
+	// Return if requested level is in non site levels array	
+	if ( in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
+		return;
+
 	if(!empty($_REQUEST['sitename']))
 	{
 		$sitename = $_REQUEST['sitename'];
@@ -63,8 +71,6 @@ function pmpron_pmpro_checkout_boxes()
 						$blogname = get_blog_option($blog_id, "blogname");
 					}
 				}
-				else
-					$blogname = "";
 				
 				if($blogname == "many")
 				{
@@ -121,7 +127,7 @@ add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
 //update the user after checkout
 function pmpron_update_site_after_checkout($user_id)
 {
-	global $current_user, $current_site;
+	global $current_user, $current_site, $pmpro_network_non_site_levels;
 	
 	if(isset($_REQUEST['sitename']))
 	{   
@@ -164,7 +170,7 @@ function pmpron_update_site_after_checkout($user_id)
 			return new WP_Error('pmpron_reactivation_failed', __('<strong>ERROR</strong>: Site reactivation failed.'));
 		}
 	}
-	else
+	elseif(!in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ))
 	{ 
 		$blog_id = pmpron_addSite($sitename, $sitetitle);
 		if(is_wp_error($blog_id))
@@ -221,6 +227,8 @@ function pmpron_addSite($sitename, $sitetitle)
 	//alright create the blog
 	$meta = apply_filters('signup_create_blog_meta', array ('lang_id' => 'en', 'public' => 0));
 	$blog_id = wpmu_create_blog($site, $path, $sitetitle, $current_user->ID, $meta);
+	
+	do_action("pmpro_network_new_site", $blog_id, $current_user->ID);
 
 	if ( is_a($blog_id, "WP_Error") ) {
 		return new WP_Error('blogcreate_failed', __('<strong>ERROR</strong>: Site creation failed.'));
@@ -256,13 +264,32 @@ function pmpron_pmpro_paypalexpress_session_vars()
 add_action("pmpro_paypalexpress_session_vars", "pmpron_pmpro_paypalexpress_session_vars");
 
 //require the fields and check for dupes
-function pmpron_pmpro_registration_checks()
+function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 {
-	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user;
-	$sitename = $_REQUEST['sitename'];
-	$sitetitle = $_REQUEST['sitetitle'];
-	$blog_id = $_REQUEST['blog_id'];
- 
+	if (!$pmpro_continue_registration)
+		return $pmpro_continue_registration;
+
+	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user, $pmpro_network_non_site_levels;
+	
+	if(!empty($_REQUEST['sitename']))
+		$sitename = $_REQUEST['sitename'];
+	else
+		$sitename = "";
+		
+	if(!empty($_REQUEST['sitetitle']))
+		$sitetitle = $_REQUEST['sitetitle'];
+	else
+		$sitetitle = "";
+		
+	if(!empty($_REQUEST['blog_id']))
+		$blog_id = $_REQUEST['blog_id'];
+	else
+		$blog_id = "";
+
+	// Return if requested level is in non site levels array
+	if ( in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
+		return $pmpro_continue_registration;
+
 	if($sitename && $sitetitle)
 	{
 		if(pmpron_checkSiteName($sitename))
