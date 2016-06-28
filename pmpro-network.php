@@ -15,6 +15,7 @@ Author URI: http://www.strangerstudios.com
 //set these values here or in a custom plugin
 /*
 define('PMPRO_NETWORK_MANAGE_SITES_SLUG', '/manage-sites/');	//change to relative path of your manage sites page if you are setting site credits > 1
+
 global $pmpro_network_non_site_levels;
 $pmpro_network_non_site_levels = array(1,2,3,4,5,7,9); // change to level id's that should not create a site: e.g. array('1','2','3')
 */
@@ -44,7 +45,11 @@ function pmpron_pmpro_checkout_boxes()
 		$sitename = $_SESSION['sitename'];
 		$sitetitle = $_SESSION['sitetitle']; 
 	}
-?>
+    else {
+        $sitename = '';
+        $sitetitle = '';
+    }
+    ?>
 	<table id="pmpro_site_fields" class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
 	<thead>
 		<tr>
@@ -71,25 +76,26 @@ function pmpron_pmpro_checkout_boxes()
 						$blogname = get_blog_option($blog_id, "blogname");
 					}
 				}
-				
-				if($blogname == "many")
-				{
-				?>
-				<div>
-					<p>You will be reclaiming your previous sites.</p>
-					<input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
-				</div>
-				<?php
-				}
-				elseif($blogname)
-				{
-				?>
-				<div>
-					<p>You will be reclaiming your site <strong><?php echo $blogname;?></strong>.</p>
-					<input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
-				</div>
-				<?php
-				}
+				if(!empty($blogname)) {
+                    if($blogname == "many")
+                    {
+                        ?>
+                        <div>
+                            <p>You will be reclaiming your previous sites.</p>
+                            <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
+                        </div>
+                    <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <div>
+                            <p>You will be reclaiming your site <strong><?php echo $blogname;?></strong>.</p>
+                            <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
+                        </div>
+                    <?php
+                    }
+                }
 				else
 				{
 				?>				
