@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, network sites, wpmu
 Requires at least: 3.0
 Tested up to: 3.5.2
-Stable tag: .3.3.1
+Stable tag: .4
 
 Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
 
@@ -50,6 +50,10 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .4
+* ENHANCEMENT: Added pmpron_non_site_level_array filter to setup that array vs using a global var.
+* ENHANCEMENT: If you use the pmpron_site_credits filter and the # of credits for a level is 0, then the level is treated as a non site level.
+
 = .3.3.1 =
 * BUG: Fixed some warnings.
 
@@ -57,7 +61,6 @@ Please visit our premium support site at http://www.paidmembershipspro.com for m
 * BUG: Fixed bug where we weren't checking $pmpro_network_non_site_levels global in pmpron_update_site_after_checkout.
 * BUG: Now making sure sites still exist before displaying them on the Manage Sites page.
 * FEATURE: Added ability to use custom templates for Manage Sites page.
-
 
 = .3.2.1 =
 * Fixed some warnings on the checkout page when not logged in.

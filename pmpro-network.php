@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro Network Site Helper
 Plugin URI: http://www.paidmembershipspro.com/network-sites/
 Description: Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
-Version: .3.3.1
+Version: .4
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -22,8 +22,10 @@ $pmpro_network_non_site_levels = array(1,2,3,4,5,7,9); // change to level id's t
 
 /*
  * Include Manage Sites page template
+ * Update $pmpro_network_non_site_levels array
  */
 function pmpron_init() {
+	//include manage sites page template
 	if ( file_exists( get_stylesheet_directory() . '/paid-memberships-pro/pages/manage-sites.php' ) ) {
 		$template = get_stylesheet_directory() . '/paid-memberships-pro/pages/manage-sites.php';
 	} elseif ( file_exists( get_template_directory() . '/paid-memberships-pro/pages/manage-sites.php' ) ) {
@@ -32,6 +34,14 @@ function pmpron_init() {
 		$template = 'pages/manage-sites.php';
 	}
 	require_once($template);
+	
+	//setup non site levels
+	global $pmpro_network_non_site_levels;
+	if(!is_array($pmpro_network_non_site_levels))
+		$pmpro_network_non_site_levels = array();
+
+	//filter for non site levels
+	$pmpro_network_non_site_levels = apply_filters('pmpron_non_site_level_array', $pmpro_network_non_site_levels);
 }
 add_action('init', 'pmpron_init');
 
@@ -52,15 +62,13 @@ function pmpron_pmpro_checkout_boxes()
 
 	// Return if requested level is in non site levels array
 	if ( !empty($level_id) && !empty($pmpro_network_non_site_levels) && in_array( $level_id, $pmpro_network_non_site_levels ) )
-		return;
+		return;	
 
-	// Return if the site credit for the requested level is 0 or less.
-	$site_credit = apply_filters('', 1, $current_user->ID, $level_id);
+	// Return if site credits for this level is < 1
+	$site_credits = apply_filters("pmpron_site_credits", 1, $current_user->ID, $level_id);
+	if($site_credits < 1)
+		return;
 	
-	if ($site_credit < 1) {
-		return;
-	}
-
 	if(!empty($_REQUEST['sitename']))
 	{
 		$sitename = $_REQUEST['sitename'];
@@ -301,7 +309,7 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 	if (!$pmpro_continue_registration)
 		return $pmpro_continue_registration;
 
-	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user, $pmpro_network_non_site_levels;
+	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user, $pmpro_network_non_site_levels, $pmpro_level;
 	
 	if(!empty($_REQUEST['sitename']))
 		$sitename = $_REQUEST['sitename'];
@@ -319,15 +327,20 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 		$blog_id = "";
 
 	// Return if requested level is in non site levels array
-	if ( in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
+	if ( !empty($pmpro_network_non_site_levels) && in_array( $pmpro_level->id, $pmpro_network_non_site_levels ) )
 		return $pmpro_continue_registration;
 
+	// Return if site credits for this level is < 1
+	$site_credits = apply_filters("pmpron_site_credits", 1, $current_user->ID, $pmpro_level->id);
+	if($site_credits < 1)
+		return $pmpro_continue_registration;
+		
 	if($sitename && $sitetitle)
 	{
 		if(pmpron_checkSiteName($sitename))
 		{
 			//all good
-			return true;	
+			return $pmpro_continue_registration;	
 		}
 		else
 		{
