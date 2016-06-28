@@ -51,13 +51,13 @@ function pmpron_pmpro_checkout_boxes()
 	}
 
 	// Return if requested level is in non site levels array
-	if ( !is_null($level_id) && in_array( $level_id, $pmpro_network_non_site_levels ) )
+	if ( !empty($level_id) && !empty($pmpro_network_non_site_levels) && in_array( $level_id, $pmpro_network_non_site_levels ) )
 		return;
 
 	// Return if the site credit for the requested level is 0 or less.
 	$site_credit = apply_filters('', 1, $current_user->ID, $level_id);
-
-	if (0 <= $site_credit) {
+	
+	if ($site_credit < 1) {
 		return;
 	}
 
