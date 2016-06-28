@@ -51,10 +51,13 @@ Please visit our premium support site at http://www.paidmembershipspro.com for m
 
 == Changelog ==
 = .3.3.1 =
-* Fixed some warnings.
+* BUG: Fixed some warnings.
 
 = .3.3 =
-* Fixed bug where we weren't checking $pmpro_network_non_site_levels global in pmpron_update_site_after_checkout.
+* BUG: Fixed bug where we weren't checking $pmpro_network_non_site_levels global in pmpron_update_site_after_checkout.
+* BUG: Now making sure sites still exist before displaying them on the Manage Sites page.
+* FEATURE: Added ability to use custom templates for Manage Sites page.
+
 
 = .3.2.1 =
 * Fixed some warnings on the checkout page when not logged in.
