@@ -98,8 +98,8 @@ function pmpron_pmpro_checkout_boxes()
 				//check if the user already has a blog
 				if($current_user->ID)
 				{
-					$blog_id = get_user_meta($current_user->ID, "pmpron_blog_id", true);
 					$all_blog_ids = pmpron_getBlogsForUser($current_user->ID);
+					$blog_id = get_user_meta($current_user->ID, "pmpron_blog_id", true);					
 					if(count($all_blog_ids) > 1)
 					{
 						$blogname = "many";
@@ -351,6 +351,7 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 	elseif($blog_id)
 	{
 		//check that the blog id matches the user meta
+		pmpron_updateBlogsForUser($current_user->ID);
 		$meta_blog_id = get_user_meta($current_user->ID, "pmpron_blog_id", true);
 		if($meta_blog_id != $blog_id)
 		{
@@ -460,8 +461,9 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 	global $current_user, $wpdb;
 	
 	//where is the user's site?
+	pmpron_updateBlogsForUser($current_user->ID);
 	$blog_id = get_user_meta($current_user->ID, "pmpron_blog_id", true);
-	
+		
 	if($blog_id)
 	{
 		//get the site address
@@ -643,3 +645,13 @@ function pmpron_profile_fields_update($user_id)
 }
 add_action('profile_update', 'pmpron_profile_fields_update');
 add_action('user_edit_form_tag', 'pmpron_profile_fields_update');
+
+/*
+	When a site is deleted, free up the site credit and blog id
+*/
+/*
+function pmpron_delete_blog($blog_id, $drop) {
+	//for now we are cleaning up the blog_id user metas when they are loaded.
+}
+add_action('delete_blog', 'pmpron_delete_blog', 10, 2);
+*/

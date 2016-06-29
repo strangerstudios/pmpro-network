@@ -51,6 +51,7 @@ Please visit our premium support site at http://www.paidmembershipspro.com for m
 
 == Changelog ==
 = .4
+* BUG/ENHANCEMENT: Fixed some issues where an old/deleted blog_id would still be associated with a user.
 * ENHANCEMENT: Added pmpron_non_site_level_array filter to setup that array vs using a global var.
 * ENHANCEMENT: If you use the pmpron_site_credits filter and the # of credits for a level is 0, then the level is treated as a non site level.
 
