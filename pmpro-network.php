@@ -174,7 +174,8 @@ function pmpron_update_site_after_checkout($user_id)
 		//new site, on-site checkout
 		$sitename = $_REQUEST['sitename'];
 		$sitetitle = $_REQUEST['sitetitle'];
-		$blog_id = intval($_REQUEST['blog_id']);
+		if(!empty($_REQUEST['blog_id']))
+			$blog_id = intval($_REQUEST['blog_id']);
 	}
 	elseif(isset($_REQUEST['blog_id']))
 	{
@@ -186,7 +187,8 @@ function pmpron_update_site_after_checkout($user_id)
 		//new site, off-site checkout
 		$sitename = $_SESSION['sitename'];
 		$sitetitle = $_SESSION['sitetitle'];
-		$blog_id = intval($_SESSION['blog_id']);
+		if(!empty($_SESSION['blog_id']))
+			$blog_id = intval($_SESSION['blog_id']);
 	}	
 	elseif(isset($_SESSION['blog_id']))
 	{
