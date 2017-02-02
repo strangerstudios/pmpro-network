@@ -1,9 +1,9 @@
 === Paid Memberships Pro Network Site Helper ===
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, network sites, wpmu
-Requires at least: 3.0
-Tested up to: 3.5.2
-Stable tag: .4.1
+Requires at least: 4
+Tested up to: 4.7.2
+Stable tag: .4.2
 
 Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
 
@@ -50,6 +50,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .4.2 =
+* BUG: Fixed some more warnings.
+
 = .4.1 =
 * BUG: Fixed some warnings during account creation.
 

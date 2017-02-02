@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro Network Site Helper
 Plugin URI: http://www.paidmembershipspro.com/network-sites/
 Description: Sample Network/Multisite Setup for Sites Running Paid Memberships Pro. This plugin requires the Paid Memberships Pro plugin, which can be found in the WordPress repository.
-Version: .4
+Version: .4.2
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -196,7 +196,7 @@ function pmpron_update_site_after_checkout($user_id)
 		$blog_id = intval($_SESSION['blog_id']);
 	}	
 	
-	if($blog_id)
+	if(!empty($blog_id))
 	{
 		//reclaiming, first check that this id is associated with the user	
 		$all_blog_ids = pmpron_getBlogsForUser($user_id);
