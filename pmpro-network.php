@@ -237,7 +237,8 @@ function pmpron_update_site_after_checkout($user_id)
 			$r = new WP_Error('pmpron_reactivation_failed', __('<strong>ERROR</strong>: Site reactivation failed.'));			
 		}
 	}
-	elseif( !empty( $user_level ) && !in_array( $user_level, $pmpro_network_non_site_levels ) && pmpron_getSiteCredits( $user_level->id ) > 0 )
+	elseif( !empty( $user_level ) && !empty( $user_level->id ) && 
+			!in_array( $user_level->id, $pmpro_network_non_site_levels ) && pmpron_getSiteCredits( $user_level->id ) > 0 )
 	{
 		$blog_id = pmpron_addSite($sitename, $sitetitle);
 		if(is_wp_error($blog_id))
