@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Member Network Sites Add On
 Plugin URI: http://www.paidmembershipspro.com/network-sites/
 Description: Create a network site for the member as part of membership to the main site.
-Version: .4.3
+Version: .5
 Author: Stranger Studios
 Author URI: http://www.strangerstudios.com
 */
@@ -188,8 +188,8 @@ add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
 //update the user after checkout
 function pmpron_update_site_after_checkout($user_id)
 {
-	global $current_user, $current_site, $pmpro_network_non_site_levels;
-
+	global $current_user, $current_site, $pmpro_network_non_site_levels;	
+	
 	if(isset($_REQUEST['sitename']))
 	{   
 		//new site, on-site checkout
@@ -215,7 +215,10 @@ function pmpron_update_site_after_checkout($user_id)
 	{
 		//reclaiming, off-site checkout
 		$blog_id = intval($_SESSION['blog_id']);
-	}	
+	}
+	
+	$r = false;		//default return value
+	$user_level = pmpro_getMembershipLevelForUser($user_id);
 	
 	if(!empty($blog_id))
 	{
@@ -226,24 +229,27 @@ function pmpron_update_site_after_checkout($user_id)
 			//activate the blog
 			update_blog_status( $blog_id, 'deleted', '0' );
 			do_action( 'activate_blog', $blog_id );
+			$r = true;
 		}		
 		else
 		{
 			//uh oh, were they trying to claim someone else's blog?
-			return new WP_Error('pmpron_reactivation_failed', __('<strong>ERROR</strong>: Site reactivation failed.'));
+			$r = new WP_Error('pmpron_reactivation_failed', __('<strong>ERROR</strong>: Site reactivation failed.'));			
 		}
 	}
-	elseif( !in_array( $_REQUEST['level'], $pmpro_network_non_site_levels ) )
+	elseif( !empty( $user_level ) && !in_array( $user_level, $pmpro_network_non_site_levels ) && pmpron_getSiteCredits( $user_level->id ) > 0 )
 	{
 		$blog_id = pmpron_addSite($sitename, $sitetitle);
 		if(is_wp_error($blog_id))
-			return $blog_id;
+			$r = $blog_id;
 	}
 	
 	//clear session vars
 	unset($_SESSION['sitename']);
 	unset($_SESSION['sitetitle']);
 	unset($_SESSION['blog_id']);
+	
+	return $r;
 }
 add_action('pmpro_after_checkout', 'pmpron_update_site_after_checkout');
 
