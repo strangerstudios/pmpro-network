@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, multisite, network, network sites, wpmu
 Requires at least: 4.0
 Tested up to: 4.8
-Stable tag: .5
+Stable tag: .5.1
 
 Create a network site for the member as part of membership to the main site.
 
@@ -53,6 +53,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= .5.1 =
+* ENHANCEMENT: Improved fields display on membership checkout page to use no tables
+
 = .5 =
 * BUG FIX: Fixed issue with levels set with 0 site credits.
 * ENHANCEMENT: You can now set the number of site credits for a level by editing that level on the main site. These values will default to the value set via the pmpron_site_credits filter. You can remove your custom pmpron_site_credits filter code or continue to use the filter which will override the value set for the level.
