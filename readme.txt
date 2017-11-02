@@ -13,17 +13,21 @@ Allow a member to purchase one or more sites as part of membership. Once configu
 
 The site will be created for them after registering. Any sites attached to a member will be deactivated when membership expires or cancels. If they sign up for a membership again, the site will be reactivated.
 
+Full documentation is available at https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/
+
 == Installation ==
 
 1. Make sure you have the Paid Memberships Pro plugin installed and activated.
 1. Make sure you have properly configured Network Sites on your WordPress Multisite.
 1. Upload the 'pmpro-network' directory to the '/wp-content/plugins/' directory of your site.
-1. Activate the plugin through the 'Plugins' menu in WordPress.
+1. Activate the plugin on the main site (the primary domaoin of the network) through the 'Plugins' menu in WordPress.
 
 == Defining the Membership Level "Site Credits" ==
-You must define the constant PMPRO_NETWORK_MANAGE_SITES_SLUG in a plugin for PMPro Customizations on your main network site. This is the page that members will see to let them manage their sites on the network and create new sites based on the level’s allowance.
+You must create a page to allow members to manage their sites. This page can be generated on the Memberships > Page  Settings page of the WordPress dashboard. The page should contain the shortcode [pmpron_manage_sites].
 
-Set the number of "site credits" given per level by editing the level on the main site. Users checking out for these levels will be able to create a subsite on the network for each site credit they have.
+Or, you can define the constant PMPRO_NETWORK_MANAGE_SITES_SLUG in a plugin for PMPro Customizations on your main network site. This is the page that members will see to let them manage their sites on the network and create new sites based on the level’s allowance.
+
+Then, set the number of "site credits" given per level by editing the level on the main site under Memberships > Membership Levels > Edit Level. Users checking out for these levels will be able to create a subsite on the network for each site credit they have.
 
 You may also use the pmpron_site_credits filter (example below) to customize the number of sites allotted by level ID. The filter should be placed in your active theme’s functions.php file or a helper plugin for PMPro Customizations (our recommended method).
 
@@ -50,7 +54,7 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 
 = I need help installing, configuring, or customizing the plugin. =
 
-Please visit our premium support site at http://www.paidmembershipspro.com for more documentation and our support forums.
+Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
 = .5.1 =

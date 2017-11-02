@@ -1,26 +1,13 @@
 <?php
 /*
 Plugin Name: Paid Memberships Pro - Member Network Sites Add On
-Plugin URI: http://www.paidmembershipspro.com/network-sites/
+Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/
 Description: Create a network site for the member as part of membership to the main site.
-Version: .5
-Author: Stranger Studios
-Author URI: http://www.strangerstudios.com
-*/
-/*	
-	Copyright 2011	Stranger Studios	(email : jason@strangerstudios.com)	 
-	This code is licensed under the GPLv2.
+Version: .5.1
+Author: Paid Memberships Pro
+Author URI: https://www.paidmembershipspro.com
 */
 
-//set these values here or in a custom plugin
-/*
-define('PMPRO_NETWORK_MANAGE_SITES_SLUG', '/manage-sites/');	//change to relative path of your manage sites page if you are setting site credits > 1
-
-global $pmpro_network_non_site_levels;
-$pmpro_network_non_site_levels = array(1,2,3,4,5,7,9); // change to level id's that should not create a site: e.g. array('1','2','3')
-*/
-
-//$pmpro_site_credits = get_option('pmpron_site_credits_'.$level_id);
 /**
  * Get the number of site credits for a given level.
  */
@@ -106,15 +93,13 @@ function pmpron_pmpro_checkout_boxes()
         $sitetitle = '';
     }
     ?>
-	<table id="pmpro_site_fields" class="pmpro_checkout top1em" width="100%" cellpadding="0" cellspacing="0" border="0">
-	<thead>
-		<tr>
-			<th><span class="pmpro_thead-name"><?php _e( 'Site Information', 'pmpro-network'); ?></span><span class="pmpro_thead-msg"><?php echo sprintf( 'Sites Included: <strong>%s</strong>', pmpron_getSiteCredits($level_id), 'pmpro-network'); ?></span></th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr>
-			<td>
+	<div id="pmpro_site_fields" class="pmpro_checkout">
+		<hr />
+		<h3>
+			<span class="pmpro_checkout-h3-name"><?php _e( 'Site Information', 'pmpro-network'); ?></span>
+			<span class="pmpro_checkout-h3-msg"><?php echo sprintf( 'Sites Included: <strong>%s</strong>', pmpron_getSiteCredits($level_id), 'pmpro-network'); ?></span>
+		</h3>
+		<div class="pmpro_checkout-fields">
 			<?php
 				//check if the user already has a blog
 				if($current_user->ID)
@@ -135,7 +120,7 @@ function pmpron_pmpro_checkout_boxes()
                     if($blogname == "many")
                     {
                         ?>
-                        <div>
+                        <div class="pmpro_checkout-field">
                             <p>You will be reclaiming your previous sites.</p>
                             <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
                         </div>
@@ -144,7 +129,7 @@ function pmpron_pmpro_checkout_boxes()
                     else
                     {
                         ?>
-                        <div>
+                        <div class="pmpro_checkout-field">
                             <p>You will be reclaiming your site <strong><?php echo $blogname;?></strong>.</p>
                             <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
                         </div>
@@ -154,7 +139,7 @@ function pmpron_pmpro_checkout_boxes()
 				else
 				{
 				?>				
-				<div>
+				<div class="pmpro_checkout-field pmpro_checkout-field-sitename">
 					<label for="sitename"><?php _e('Site Name') ?></label>
 					<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" />				
 					<?php
@@ -166,21 +151,18 @@ function pmpron_pmpro_checkout_boxes()
 						else
 							$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
 
-						echo '<div class="leftmar"><strong>' . sprintf( __('Your address will be %s'), $site ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.' ) . '</div>';					
+						echo '<p><strong>' . sprintf( __('Your address will be %s'), $site ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.' ) . '</p>';					
 					?>
-				</div>
-				<div>
+				</div> <!-- end pmpro_checkout-field-sitename -->
+				<div class="pmpro_checkout-field pmpro_checkout-field-sitetitle">
 					<label for="sitetitle"><?php _e('Site Title')?></label>
 					<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" />
-				</div> 
+				</div> <!-- end pmpro_checkout-field-sitetitle -->
 				<?php
 				}
-				?>			
-			
-			</td>
-		</tr>
-	</tbody>
-	</table>
+				?>
+		</div> <!-- end pmpro_checkout-fields -->
+	</div> <!-- end pmpro_site_fields -->
 <?php
 }
 add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
@@ -740,8 +722,8 @@ function pmpron_plugin_row_meta($links, $file) {
 	if(strpos($file, 'pmpro-network.php') !== false)
 	{
 		$new_links = array(
-			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/plus-add-ons/pmpro-network-multisite-membership/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-network' ) ) . '">' . __( 'Docs', 'pmpro-network' ) . '</a>',
-			'<a href="' . esc_url('http://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-network' ) ) . '">' . __( 'Support', 'pmpro-network' ) . '</a>',
+			'<a href="' . esc_url('https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/')  . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-network' ) ) . '">' . __( 'Docs', 'pmpro-network' ) . '</a>',
+			'<a href="' . esc_url('https://paidmembershipspro.com/support/') . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-network' ) ) . '">' . __( 'Support', 'pmpro-network' ) . '</a>',
 		);
 		$links = array_merge($links, $new_links);
 	}
