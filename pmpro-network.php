@@ -141,7 +141,7 @@ function pmpron_pmpro_checkout_boxes()
 				?>				
 				<div class="pmpro_checkout-field pmpro_checkout-field-sitename">
 					<label for="sitename"><?php _e('Site Name') ?></label>
-					<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" />				
+					<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" /><span class="pmpro_asterisk"> <abbr title="Required Field">*</abbr></span>				
 					<?php
 						global $current_site;
 						$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
@@ -156,7 +156,7 @@ function pmpron_pmpro_checkout_boxes()
 				</div> <!-- end pmpro_checkout-field-sitename -->
 				<div class="pmpro_checkout-field pmpro_checkout-field-sitetitle">
 					<label for="sitetitle"><?php _e('Site Title')?></label>
-					<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" />
+					<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" /><span class="pmpro_asterisk"> <abbr title="Required Field">*</abbr></span>
 				</div> <!-- end pmpro_checkout-field-sitetitle -->
 				<?php
 				}
