@@ -137,7 +137,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 							<strong><a href="<?php echo get_site_url( $blog_id );?>"><?php echo get_blog_option( $blog_id, 'blogname' ); ?></a></strong><br />
 							<?php echo get_site_url( $blog_id ); ?>
 							<div class="pmpro_actionlinks">
-								<a href="<?php echo get_site_url( $blog_id );?>"><?php _e('Visit', 'pmpro-network'); ?></a>&nbsp;|&nbsp;<a href="<?php echo get_site_url( $blog_id ); ?>/wp-admin/"><?php _e('Dashboard', 'pmpro-network'); ?></a>
+								<a href="<?php echo esc_url( get_site_url( $blog_id ) ); ?>"><?php esc_html_e('Visit', 'pmpro-network'); ?></a>&nbsp;|&nbsp;<a href="<?php echo esc_url( get_site_url( $blog_id, '/wp-admin/' ) ); ?>"><?php esc_html_e('Dashboard', 'pmpro-network'); ?></a>
+
 							</div> <!-- end pmpro_actionlinks -->
 						<?php } ?>
 					</li>
