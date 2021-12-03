@@ -131,7 +131,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 					?>
 					<li class="<?php echo esc_attr( $class ); ?>">
 						<?php if ( get_blog_status( $blog_id, "deleted" ) ) { ?>
-							<strong><?php get_blog_option($blog_id, 'blogname' ); ?></strong> <?php _e('(deactivated)', 'pmpro-network'); ?>
+							<strong><?php echo esc_html( get_blog_option($blog_id, 'blogname' ) ); ?></strong> <?php esc_html_e('(deactivated)', 'pmpro-network'); ?>
+
 						<?php } else { ?>
 							<strong><a href="<?php echo get_site_url( $blog_id );?>"><?php echo get_blog_option( $blog_id, 'blogname' ); ?></a></strong><br />
 							<?php echo get_site_url( $blog_id ); ?>
