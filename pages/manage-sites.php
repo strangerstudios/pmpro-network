@@ -77,11 +77,11 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 			<form id="pmpro_add_site" class="pmpro_form" action="" method="post">
 				<div class="pmpro_checkout">
 					<h3>
-						<span class="pmpro_checkout-h3-name"><?php _e('Add a Site', 'pmpro-network'); ?></span>
+						<span class="pmpro_checkout-h3-name"><?php esc_html_e('Add a Site', 'pmpro-network'); ?></span>
 					</h3>
 					<div class="pmpro_checkout-fields">
 						<div class="pmpro_checkout-field">
-							<label for="sitename"><?php _e('Site Name', 'pmpro-network'); ?></label>
+							<label for="sitename"><?php esc_html_e('Site Name', 'pmpro-network'); ?></label>
 							<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" />
 							<?php
 								global $current_site;
@@ -96,7 +96,7 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 							?>
 						</div>
 						<div class="pmpro_checkout-field">
-							<label for="sitetitle"><?php _e('Site Title', 'pmpro-network'); ?></label>
+							<label for="sitetitle"><?php esc_html_e('Site Title', 'pmpro-network'); ?></label>
 							<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" />
 						</div>
 						<div class="pmpro_submit">
@@ -112,7 +112,7 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 	<?php if ( ! empty( $blog_ids ) ) { ?>
 		<hr />
 		<h3>
-			<span class="pmpro_checkout-h3-name"><?php _e( 'Your Sites', 'pmpro-network' ); ?></span>
+			<span class="pmpro_checkout-h3-name"><?php esc_html_e( 'Your Sites', 'pmpro-network' ); ?></span>
 		</h3>
 		<ul class="pmpro_network_sites">
 			<?php
