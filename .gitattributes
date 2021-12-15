@@ -1,0 +1,9 @@
+# Ignore
+
+# Directories
+/.github export-ignore
+
+# Files
+.gitattributes export-ignore
+pmpro-network-banner.jpg export-ignore
+README.md export-ignore
