@@ -255,25 +255,48 @@ function pmpron_extra_page_settings($pages) {
 }
 add_action('pmpro_extra_page_settings', 'pmpron_extra_page_settings');
 
+/**
+ * Get the ID (or post object) for the "Manage Sites" page.
+ */
+function pmpron_get_manage_sites_post_id() {
+	global $pmpro_pages;
+
+	// If the Manage Sites page is set in the global variable, return it.
+	$manage_post = $pmpro_pages['manage_sites'];
+	if ( ! empty( $manage_post ) ) {
+		return $manage_post;
+	}
+
+	// Check if the Manage Sites page is defined (this was an old way we offered before the UI).
+	if ( defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
+		//check if the manage sites slug is defined.
+		$manage_post = get_page_by_path( PMPRO_NETWORK_MANAGE_SITES_SLUG );
+		return $manage_post;
+	}
+}
+
 /*
 	Add "Manage Sites" link to Member Links
 */
 function pmpron_pmpro_member_links_top() {	
-	global $current_user, $pmpro_pages;
+	global $current_user;
+
+	// Get the current user's number of site credits.
 	$site_credits = $current_user->pmpron_site_credits;
-	$manage_post = $pmpro_pages['manage_sites'];
 	
-	if(!empty($site_credits) && !empty($manage_post)) {
-		?>
-		<li><a href="<?php echo get_permalink($pmpro_pages['manage_sites']); ?>"><?php echo get_the_title($pmpro_pages['manage_sites']); ?></a></li>
-		<?php
-	} elseif( defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
-		//check if the manage sites slug is defined.
-		$manage_post = get_page_by_path(PMPRO_NETWORK_MANAGE_SITES_SLUG);
-		?>
-		<li><a href="<?php echo get_permalink($manage_post); ?>"><?php echo get_the_title( $manage_post ); ?></a></li>
-		<?php
-	}	
+	// Get the manage sites page ID or post object.
+	$manage_post = pmpron_get_manage_sites_post_id();
+
+	// Don't show a link if the "Manage Sites" page is the "Membership Account" page.
+	global $pmpro_pages;
+	if ( $manage_post === $pmpro_pages['account'] || $manage_post->ID == $pmpro_pages['account'] ) {
+		return;
+	}
+
+	// Show a link to manage sites if the member has credits and the page exists.
+	if ( ! empty( $site_credits ) && ! empty( $manage_post ) ) { ?>
+		<li><a href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html_e( get_the_title( $manage_post ) ); ?></a></li>
+	<?php }
 }
 add_filter( 'pmpro_member_links_top', 'pmpron_pmpro_member_links_top' );
 
@@ -515,12 +538,9 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 	pmpron_updateBlogsForUser($current_user->ID);
 	$blog_id = get_user_meta($current_user->ID, "pmpron_blog_id", true);
 	
-	//get the manage sites page URL
-	$manage_post = $pmpro_pages['manage_sites'];
-	if( empty($manage_post) && defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
-		$manage_post = get_page_by_path(PMPRO_NETWORK_MANAGE_SITES_SLUG);
-	}
-		
+	// Get the manage sites page ID or post object.
+	$manage_post = pmpron_get_manage_sites_post_id();
+
 	if($blog_id)
 	{
 		//get the site address
@@ -528,7 +548,9 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 		$message .= '<hr />';
 		$message .= '<h2>' . __('Your Primary Site', 'pmpro-network') . '</h2>';
 		$message .= '<p><strong><a href="' . $address . '">' . $address . '</a></strong> | <a href="' . $address . '">' . __('Visit', 'pmpro-network') . '</a> | <a href="' . $address . 'wp-admin/">' . __('Dashboard', 'pmpro-network') . '</a></p>';
-		$message .= '<p><a class="pmpro_btn" href="' . get_permalink($manage_post) . '">' . get_the_title( $manage_post ) . '</a></p>';
+		if ( ! empty( $manage_post ) ) {
+			$message .= '<p><a class="pmpro_btn" href="' . esc_url( get_permalink( $manage_post ) ) . '">' . esc_html( get_the_title( $manage_post ) ) . '</a></p>';
+		}
 		$message .= '<hr />';
 	}
 
@@ -642,12 +664,9 @@ function pmpron_myblogs_allblogs_options()
 	//how many can they create?
 	$site_credits = $current_user->pmpron_site_credits;
 
-	//get the manage sites page URL
-	$manage_post = $pmpro_pages['manage_sites'];
-	if( empty($manage_post) && defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
-		$manage_post = get_page_by_path(PMPRO_NETWORK_MANAGE_SITES_SLUG);
-	}
-	
+	// Get the manage sites page ID or post object.
+	$manage_post = pmpron_get_manage_sites_post_id();
+
 	//In case they have sites but no site credit yet. Assume they have $num site credits.
 	//This will give 1 site credit to users on sites upgrading pmpro-network from .1/.2 to .3. 
 	if(empty($site_credits) && !empty($num)) {
@@ -658,11 +677,9 @@ function pmpron_myblogs_allblogs_options()
 	<hr />
 	<p><?php esc_html_e( 'Below is a list of all sites you are an owner or member of.', 'pmpro-network' ); ?>
 	<?php
-	if( !empty($site_credits) && !empty($manage_post) ) {
-		?>
-		<a class="button button-primary" href="<?php echo get_permalink( $manage_post ); ?>"><?php esc_html_e( 'Manage Your Sites &raquo;', 'pmpro-network' ); ?></a>
-		<?php
-	}
+		if ( ! empty( $site_credits ) && ! empty( $manage_post ) ) { ?>
+		<a class="button button-primary" href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html_e( get_the_title( $manage_post ) ); ?></a>
+		<?php }
 	?>
 	</p>
 	<?php
