@@ -256,14 +256,15 @@ function pmpron_extra_page_settings($pages) {
 add_action('pmpro_extra_page_settings', 'pmpron_extra_page_settings');
 
 /**
- * Get the ID (or post object) for the "Manage Sites" page.
+ * Get the post object for the "Manage Sites" page.
  */
-function pmpron_get_manage_sites_post_id() {
+function pmpron_get_manage_sites_post() {
 	global $pmpro_pages;
 
 	// If the Manage Sites page is set in the global variable, return it.
 	$manage_post = $pmpro_pages['manage_sites'];
 	if ( ! empty( $manage_post ) ) {
+		$manage_post = get_post( $manage_post );
 		return $manage_post;
 	}
 
@@ -284,8 +285,8 @@ function pmpron_pmpro_member_links_top() {
 	// Get the current user's number of site credits.
 	$site_credits = $current_user->pmpron_site_credits;
 	
-	// Get the manage sites page ID or post object.
-	$manage_post = pmpron_get_manage_sites_post_id();
+	// Get the manage sites post object.
+	$manage_post = pmpron_get_manage_sites_post();
 
 	// Don't show a link if the "Manage Sites" page is the "Membership Account" page.
 	global $pmpro_pages;
@@ -538,8 +539,8 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 	pmpron_updateBlogsForUser($current_user->ID);
 	$blog_id = get_user_meta($current_user->ID, "pmpron_blog_id", true);
 	
-	// Get the manage sites page ID or post object.
-	$manage_post = pmpron_get_manage_sites_post_id();
+	// Get the manage sites post object.
+	$manage_post = pmpron_get_manage_sites_post();
 
 	if($blog_id)
 	{
@@ -664,8 +665,8 @@ function pmpron_myblogs_allblogs_options()
 	//how many can they create?
 	$site_credits = $current_user->pmpron_site_credits;
 
-	// Get the manage sites page ID or post object.
-	$manage_post = pmpron_get_manage_sites_post_id();
+	// Get the manage sites post object.
+	$manage_post = pmpron_get_manage_sites_post();
 
 	//In case they have sites but no site credit yet. Assume they have $num site credits.
 	//This will give 1 site credit to users on sites upgrading pmpro-network from .1/.2 to .3. 
