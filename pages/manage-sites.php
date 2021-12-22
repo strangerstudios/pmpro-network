@@ -95,7 +95,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 								else
 									$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
 
-								echo '<p><small class="lite"><strong>' . sprintf( __('Your address will be %s', 'pmpro-network' ), $site ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) . '</small></p>';
+								echo '<p><small class="lite"><strong>' . esc_html( sprintf( __('Your address will be %s', 'pmpro-network' ), $site ) ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) . '</small></p>';
+
 							?>
 						</div>
 						<div class="pmpro_checkout-field">
