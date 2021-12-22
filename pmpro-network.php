@@ -6,7 +6,17 @@ Description: Create a network site for the member as part of membership to the m
 Version: .5.1
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
+Text Domain: pmpro-network
+Domain Path: /languages
 */
+
+/**
+ * Load the languages folder for translations.
+ */
+function pmpron_load_textdomain() {
+	load_plugin_textdomain( 'pmpro-network', false, basename( dirname( __FILE__ ) ) . '/languages' );
+}
+add_action( 'plugins_loaded', 'pmpron_load_textdomain' );
 
 /**
  * Get the number of site credits for a given level.
@@ -96,8 +106,8 @@ function pmpron_pmpro_checkout_boxes()
 	<div id="pmpro_site_fields" class="pmpro_checkout">
 		<hr />
 		<h3>
-			<span class="pmpro_checkout-h3-name"><?php _e( 'Site Information', 'pmpro-network'); ?></span>
-			<span class="pmpro_checkout-h3-msg"><?php echo sprintf( 'Sites Included: <strong>%s</strong>', pmpron_getSiteCredits($level_id), 'pmpro-network'); ?></span>
+			<span class="pmpro_checkout-h3-name"><?php esc_html_e( 'Site Information', 'pmpro-network'); ?></span>
+			<span class="pmpro_checkout-h3-msg"><?php echo sprintf( __( 'Sites Included: <strong>%s</strong>', 'pmpro-network' ), pmpron_getSiteCredits($level_id), 'pmpro-network'); ?></span>
 		</h3>
 		<div class="pmpro_checkout-fields">
 			<?php
@@ -121,8 +131,9 @@ function pmpron_pmpro_checkout_boxes()
                     {
                         ?>
                         <div class="pmpro_checkout-field">
-                            <p>You will be reclaiming your previous sites.</p>
-                            <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
+                            <p><?php esc_html_e( 'You will be reclaiming your previous sites.', 'pmpro-network' ); ?></p>
+                            <input type="hidden" name="blog_id" value="<?php echo esc_attr( $blog_id ); ?>" />
+
                         </div>
                     <?php
                     }
@@ -130,8 +141,9 @@ function pmpron_pmpro_checkout_boxes()
                     {
                         ?>
                         <div class="pmpro_checkout-field">
-                            <p>You will be reclaiming your site <strong><?php echo $blogname;?></strong>.</p>
-                            <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
+                            <p><?php echo sprintf( __( 'You will be reclaiming your site <strong>%s</strong>.', 'pmpro-network' ), $blogname ); ?></p>
+                            <input type="hidden" name="blog_id" value="<?php echo esc_attr( $blog_id ); ?>" />
+
                         </div>
                     <?php
                     }
@@ -140,7 +152,7 @@ function pmpron_pmpro_checkout_boxes()
 				{
 				?>				
 				<div class="pmpro_checkout-field pmpro_checkout-field-sitename">
-					<label for="sitename"><?php _e('Site Name') ?></label>
+					<label for="sitename"><?php esc_html_e( 'Site Name', 'pmpro-network' ); ?></label>
 					<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" /><span class="pmpro_asterisk"> <abbr title="Required Field">*</abbr></span>				
 					<?php
 						global $current_site;
@@ -151,12 +163,14 @@ function pmpron_pmpro_checkout_boxes()
 						else
 							$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
 
-						echo '<p><strong>' . sprintf( __('Your address will be %s'), $site ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.' ) . '</p>';					
+						echo '<p><strong>' . esc_html( sprintf( __( 'Your address will be %s', 'pmpro-network' ), $site ) ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) . '</p>';
+
 					?>
 				</div> <!-- end pmpro_checkout-field-sitename -->
 				<div class="pmpro_checkout-field pmpro_checkout-field-sitetitle">
-					<label for="sitetitle"><?php _e('Site Title')?></label>
-					<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" /><span class="pmpro_asterisk"> <abbr title="Required Field">*</abbr></span>
+					<label for="sitetitle"><?php esc_html_e( 'Site Title', 'pmpro-network' ); ?></label>
+					<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" /><span class="pmpro_asterisk"> <abbr title="<?php esc_attr_e( 'Required Field', 'pmpro-network' ); ?>">*</abbr></span>
+
 				</div> <!-- end pmpro_checkout-field-sitetitle -->
 				<?php
 				}
@@ -245,25 +259,56 @@ function pmpron_extra_page_settings($pages) {
 }
 add_action('pmpro_extra_page_settings', 'pmpron_extra_page_settings');
 
+/**
+ * Get the post object for the "Manage Sites" page.
+ *
+ * @since 0.5.2
+ *
+ * @return null|WP_Post The WP_Post object for the manage sites post or null if not set/found.
+ */
+function pmpron_get_manage_sites_post() {
+	global $pmpro_pages;
+
+	// If the Manage Sites page is set in the global variable, return it.
+	$manage_post = $pmpro_pages['manage_sites'];
+	if ( ! empty( $manage_post ) ) {
+		return get_post( $manage_post );
+	}
+
+	// Check if the Manage Sites page is defined (this was an old way we offered before the UI).
+	if ( defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
+		//check if the manage sites slug is defined.
+		return get_page_by_path( PMPRO_NETWORK_MANAGE_SITES_SLUG );
+	}
+
+	return null;
+}
+
+
 /*
 	Add "Manage Sites" link to Member Links
 */
 function pmpron_pmpro_member_links_top() {	
-	global $current_user, $pmpro_pages;
+	global $current_user;
+
+	// Get the current user's number of site credits.
 	$site_credits = $current_user->pmpron_site_credits;
-	$manage_post = $pmpro_pages['manage_sites'];
 	
-	if(!empty($site_credits) && !empty($manage_post)) {
-		?>
-		<li><a href="<?php echo get_permalink($pmpro_pages['manage_sites']); ?>"><?php echo get_the_title($pmpro_pages['manage_sites']); ?></a></li>
-		<?php
-	} elseif( defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
-		//check if the manage sites slug is defined.
-		$manage_post = get_page_by_path(PMPRO_NETWORK_MANAGE_SITES_SLUG);
-		?>
-		<li><a href="<?php echo get_permalink($manage_post); ?>"><?php echo get_the_title( $manage_post ); ?></a></li>
-		<?php
-	}	
+	// Get the manage sites post object.
+	$manage_post = pmpron_get_manage_sites_post();
+
+	// Don't show a link if the "Manage Sites" page is the "Membership Account" page.
+	global $pmpro_pages;
+	if ( $manage_post && ( $manage_post === $pmpro_pages['account'] || $manage_post->ID == $pmpro_pages['account'] ) ) {
+
+		return;
+	}
+
+	// Show a link to manage sites if the member has credits and the page exists.
+	if ( ! empty( $site_credits ) && ! empty( $manage_post ) ) { ?>
+		<li><a href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html( get_the_title( $manage_post ) ); ?></a></li>
+
+	<?php }
 }
 add_filter( 'pmpro_member_links_top', 'pmpron_pmpro_member_links_top' );
 
@@ -294,14 +339,15 @@ function pmpron_pmpro_membership_level_after_other_settings() {
 		$pmpro_site_credits = '';
 	}
 	?>
-	<h3 class="topborder"><?php _e( 'Site Credits', 'pmpro' ); ?></h3>
+	<h3 class="topborder"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h3>
 	<table class="form-table">
 		<tbody>
 			<tr>
-				<th scope="row" valign="top"><label for="pmpro_show_level"><?php _e( 'Number of Sites', 'pmpro' );?>:</label></th>
+				<th scope="row" valign="top"><label for="pmpro_show_level"><?php esc_html_e( 'Number of Sites', 'pmpro-network' );?>:</label></th>
 				<td>
-					<input type="text" id="pmpro_site_credits" name="pmpro_site_credits" value="<?php echo $pmpro_site_credits; ?>" size="5" />
-					<p class="description"><?php _e( 'Set the number of sites members of this level will be allowed to create as part of membership. Numerical values only (no letters or special characters).', 'pmpro-network'); ?></p>
+					<input type="text" id="pmpro_site_credits" name="pmpro_site_credits" value="<?php echo esc_attr( $pmpro_site_credits ); ?>" size="5" />
+
+					<p class="description"><?php esc_html_e( 'Set the number of sites members of this level will be allowed to create as part of membership. Numerical values only (no letters or special characters).', 'pmpro-network'); ?></p>
 				</td>
 			</tr>
 		</tbody>
@@ -505,12 +551,9 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 	pmpron_updateBlogsForUser($current_user->ID);
 	$blog_id = get_user_meta($current_user->ID, "pmpron_blog_id", true);
 	
-	//get the manage sites page URL
-	$manage_post = $pmpro_pages['manage_sites'];
-	if( empty($manage_post) && defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
-		$manage_post = get_page_by_path(PMPRO_NETWORK_MANAGE_SITES_SLUG);
-	}
-		
+	// Get the manage sites post object.
+	$manage_post = pmpron_get_manage_sites_post();
+
 	if($blog_id)
 	{
 		//get the site address
@@ -518,7 +561,9 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 		$message .= '<hr />';
 		$message .= '<h2>' . __('Your Primary Site', 'pmpro-network') . '</h2>';
 		$message .= '<p><strong><a href="' . $address . '">' . $address . '</a></strong> | <a href="' . $address . '">' . __('Visit', 'pmpro-network') . '</a> | <a href="' . $address . 'wp-admin/">' . __('Dashboard', 'pmpro-network') . '</a></p>';
-		$message .= '<p><a class="pmpro_btn" href="' . get_permalink($manage_post) . '">' . get_the_title( $manage_post ) . '</a></p>';
+		if ( ! empty( $manage_post ) ) {
+			$message .= '<p><a class="pmpro_btn" href="' . esc_url( get_permalink( $manage_post ) ) . '">' . esc_html( get_the_title( $manage_post ) ) . '</a></p>';
+		}
 		$message .= '<hr />';
 	}
 
@@ -632,12 +677,9 @@ function pmpron_myblogs_allblogs_options()
 	//how many can they create?
 	$site_credits = $current_user->pmpron_site_credits;
 
-	//get the manage sites page URL
-	$manage_post = $pmpro_pages['manage_sites'];
-	if( empty($manage_post) && defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
-		$manage_post = get_page_by_path(PMPRO_NETWORK_MANAGE_SITES_SLUG);
-	}
-	
+	// Get the manage sites post object.
+	$manage_post = pmpron_get_manage_sites_post();
+
 	//In case they have sites but no site credit yet. Assume they have $num site credits.
 	//This will give 1 site credit to users on sites upgrading pmpro-network from .1/.2 to .3. 
 	if(empty($site_credits) && !empty($num)) {
@@ -646,13 +688,11 @@ function pmpron_myblogs_allblogs_options()
 	}	
 	?>
 	<hr />
-	<p><?php _e('Below is a list of all sites you are an owner or member of.', 'pmpro-network'); ?>
+	<p><?php esc_html_e( 'Below is a list of all sites you are an owner or member of.', 'pmpro-network' ); ?>
 	<?php
-	if( !empty($site_credits) && !empty($manage_post) ) {
-		?>
-		<a class="button button-primary" href="<?php echo get_permalink( $manage_post ); ?>"><?php _e('Manage Your Sites &raquo;', 'pmpro-network'); ?></a>
-		<?php
-	}
+		if ( ! empty( $site_credits ) && ! empty( $manage_post ) ) { ?>
+		<a class="button button-primary" href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html_e( get_the_title( $manage_post ) ); ?></a>
+		<?php }
 	?>
 	</p>
 	<?php
@@ -668,10 +708,10 @@ function pmpron_profile_fields($profile_user)
 	if(current_user_can("manage_network"))
 	{		
 	?>
-		<h3><?php _e("Site Credits"); ?></h3>
+		<h3><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h3>
 		<table class="form-table">
 		<tr>
-			<th><label for="site_credits"><?php _e("Site Credits"); ?></label></th>
+			<th><label for="site_credits"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></label></th>
 			<td>
 				<?php
 					//how many sites have they created?	
@@ -681,7 +721,8 @@ function pmpron_profile_fields($profile_user)
 					//how many can they create?
 					$site_credits = $profile_user->pmpron_site_credits;						
 				?>
-				<input type="text" id="site_credits" name="site_credits" size="5" value="<?php echo $site_credits; ?>" /> <em>currently using <?php echo $num; ?></em>
+				<input type="text" id="site_credits" name="site_credits" size="5" value="<?php echo esc_attr( $site_credits ); ?>" /> <em><?php echo esc_html( sprintf( __( 'currently using %s', 'pmpro-network' ), $num ) ); ?></em>
+
 			</td>
 		</tr>
 		</table>

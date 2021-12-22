@@ -39,10 +39,10 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 		if(pmpron_checkSiteName( $sitename, $sitetitle )) {
 			$blog_id = pmpron_addSite($sitename, $sitetitle);
 			if(is_wp_error($blog_id)) {
-				$pmpro_msg = "Error creating site.";
+				$pmpro_msg = __( 'Error creating site.', 'pmpro-network' );
 				$pmpro_msgt = "pmpro_error";
 			} else {
-				$pmpro_msg = "Your site has been created.";
+				$pmpro_msg = __( 'Your site has been created.', 'pmpro-network' );
 				$pmpro_msgt = "pmpro_success";
 			}
 		} else {
@@ -63,12 +63,15 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 	<?php } ?>
 	<div class="pmpro_message <?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>pmpro_error<?php } ?>">
 		<?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>
-			<?php echo sprintf('You have used %s of %s site credits.', intval($current_user->pmpron_site_credits), intval($current_user->pmpron_site_credits), 'pmpro-network'); ?>
+			<?php echo esc_html( sprintf( __( 'You have used %s of %s site credits.', 'pmpro-network' ), intval($current_user->pmpron_site_credits), intval($current_user->pmpron_site_credits) ) ); ?>
+
 			<?php if(count($blog_ids) > intval($current_user->pmpron_site_credits)) { ?>
-				<?php echo sprintf('%s of your sites have been deactivated.', count($blog_ids) - intval($current_user->pmpron_site_credits), 'pmpro-network'); ?>
+				<?php echo esc_html( sprintf( __( '%s of your sites have been deactivated.', 'pmpro-network' ), count($blog_ids) - intval($current_user->pmpron_site_credits) ) ); ?>
+
 			<?php } ?>
 		<?php } else { ?>
-			<?php echo sprintf('You have used %s of %s site credits.', count($blog_ids), intval($current_user->pmpron_site_credits), 'pmpro-network'); ?>
+			<?php echo esc_html( sprintf( __( 'You have used %s of %s site credits.', 'pmpro-network' ), count($blog_ids), intval($current_user->pmpron_site_credits) ) ); ?>
+
 		<?php } ?>
 	</div>
 
@@ -77,11 +80,11 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 			<form id="pmpro_add_site" class="pmpro_form" action="" method="post">
 				<div class="pmpro_checkout">
 					<h3>
-						<span class="pmpro_checkout-h3-name"><?php _e('Add a Site', 'pmpro-network'); ?></span>
+						<span class="pmpro_checkout-h3-name"><?php esc_html_e('Add a Site', 'pmpro-network'); ?></span>
 					</h3>
 					<div class="pmpro_checkout-fields">
 						<div class="pmpro_checkout-field">
-							<label for="sitename"><?php _e('Site Name', 'pmpro-network'); ?></label>
+							<label for="sitename"><?php esc_html_e('Site Name', 'pmpro-network'); ?></label>
 							<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" />
 							<?php
 								global $current_site;
@@ -92,16 +95,18 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 								else
 									$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
 
-								echo '<p><small class="lite"><strong>' . sprintf( __('Your address will be %s'), $site ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.' ) . '</small></p>';
+								echo '<p><small class="lite"><strong>' . esc_html( sprintf( __('Your address will be %s', 'pmpro-network' ), $site ) ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) . '</small></p>';
+
 							?>
 						</div>
 						<div class="pmpro_checkout-field">
-							<label for="sitetitle"><?php _e('Site Title', 'pmpro-network'); ?></label>
+							<label for="sitetitle"><?php esc_html_e('Site Title', 'pmpro-network'); ?></label>
 							<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" />
 						</div>
 						<div class="pmpro_submit">
 							<input type="hidden" name="addsite" value="1" />
-							<input type="submit" name="submit" value="Add Site" />
+							<input type="submit" name="submit" value="<?php esc_attr_e( 'Add Site', 'pmpro-network' ); ?>" />
+
 						</div>
 					</div> <!-- end .pmpro_checkout-fields -->
 				</div> <!-- end .pmpro_checkout -->
@@ -112,7 +117,7 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 	<?php if ( ! empty( $blog_ids ) ) { ?>
 		<hr />
 		<h3>
-			<span class="pmpro_checkout-h3-name"><?php _e( 'Your Sites', 'pmpro-network' ); ?></span>
+			<span class="pmpro_checkout-h3-name"><?php esc_html_e( 'Your Sites', 'pmpro-network' ); ?></span>
 		</h3>
 		<ul class="pmpro_network_sites">
 			<?php
