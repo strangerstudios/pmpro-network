@@ -261,6 +261,10 @@ add_action('pmpro_extra_page_settings', 'pmpron_extra_page_settings');
 
 /**
  * Get the post object for the "Manage Sites" page.
+ *
+ * @since 0.5.2
+ *
+ * @return null|WP_Post The WP_Post object for the manage sites post or null if not set/found.
  */
 function pmpron_get_manage_sites_post() {
 	global $pmpro_pages;
