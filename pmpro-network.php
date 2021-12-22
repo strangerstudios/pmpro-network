@@ -272,8 +272,7 @@ function pmpron_get_manage_sites_post() {
 	// Check if the Manage Sites page is defined (this was an old way we offered before the UI).
 	if ( defined( 'PMPRO_NETWORK_MANAGE_SITES_SLUG' ) ) {
 		//check if the manage sites slug is defined.
-		$manage_post = get_page_by_path( PMPRO_NETWORK_MANAGE_SITES_SLUG );
-		return $manage_post;
+		return get_page_by_path( PMPRO_NETWORK_MANAGE_SITES_SLUG );
 	}
 }
 
