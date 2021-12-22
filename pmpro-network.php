@@ -709,7 +709,8 @@ function pmpron_profile_fields($profile_user)
 					//how many can they create?
 					$site_credits = $profile_user->pmpron_site_credits;						
 				?>
-				<input type="text" id="site_credits" name="site_credits" size="5" value="<?php echo $site_credits; ?>" /> <em><?php echo sprintf( __( 'currently using %s', 'pmpro-network' ), $num ); ?></em>
+				<input type="text" id="site_credits" name="site_credits" size="5" value="<?php echo esc_attr( $site_credits ); ?>" /> <em><?php echo esc_html( sprintf( __( 'currently using %s', 'pmpro-network' ), $num ) ); ?></em>
+
 			</td>
 		</tr>
 		</table>
