@@ -70,7 +70,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 
 			<?php } ?>
 		<?php } else { ?>
-			<?php echo sprintf( __( 'You have used %s of %s site credits.', 'pmpro-network' ), count($blog_ids), intval($current_user->pmpron_site_credits) ); ?>
+			<?php echo esc_html( sprintf( __( 'You have used %s of %s site credits.', 'pmpro-network' ), count($blog_ids), intval($current_user->pmpron_site_credits) ) ); ?>
+
 		<?php } ?>
 	</div>
 
