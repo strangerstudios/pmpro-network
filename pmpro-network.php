@@ -169,7 +169,8 @@ function pmpron_pmpro_checkout_boxes()
 				</div> <!-- end pmpro_checkout-field-sitename -->
 				<div class="pmpro_checkout-field pmpro_checkout-field-sitetitle">
 					<label for="sitetitle"><?php esc_html_e( 'Site Title', 'pmpro-network' ); ?></label>
-					<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" /><span class="pmpro_asterisk"> <abbr title="<?php esc_html_e( 'Required Field', 'pmpro-network' ); ?>">*</abbr></span>
+					<input id="sitetitle" name="sitetitle" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" /><span class="pmpro_asterisk"> <abbr title="<?php esc_attr_e( 'Required Field', 'pmpro-network' ); ?>">*</abbr></span>
+
 				</div> <!-- end pmpro_checkout-field-sitetitle -->
 				<?php
 				}
