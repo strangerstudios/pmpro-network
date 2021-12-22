@@ -299,7 +299,8 @@ function pmpron_pmpro_member_links_top() {
 
 	// Don't show a link if the "Manage Sites" page is the "Membership Account" page.
 	global $pmpro_pages;
-	if ( $manage_post === $pmpro_pages['account'] || $manage_post->ID == $pmpro_pages['account'] ) {
+	if ( $manage_post && ( $manage_post === $pmpro_pages['account'] || $manage_post->ID == $pmpro_pages['account'] ) ) {
+
 		return;
 	}
 
