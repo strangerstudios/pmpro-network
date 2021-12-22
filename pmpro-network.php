@@ -161,7 +161,8 @@ function pmpron_pmpro_checkout_boxes()
 						else
 							$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
 
-						echo '<p><strong>' . sprintf( __( 'Your address will be %s', 'pmpro-network' ), $site ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) . '</p>';
+						echo '<p><strong>' . esc_html( sprintf( __( 'Your address will be %s', 'pmpro-network' ), $site ) ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) . '</p>';
+
 					?>
 				</div> <!-- end pmpro_checkout-field-sitename -->
 				<div class="pmpro_checkout-field pmpro_checkout-field-sitetitle">
