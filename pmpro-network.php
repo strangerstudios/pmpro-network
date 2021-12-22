@@ -306,7 +306,7 @@ function pmpron_pmpro_member_links_top() {
 
 	// Show a link to manage sites if the member has credits and the page exists.
 	if ( ! empty( $site_credits ) && ! empty( $manage_post ) ) { ?>
-		<li><a href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html( get_the_title( $manage_post ) ); ?></a></li>
+		<li><a href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html_e( get_the_title( $manage_post ) ); ?></a></li>
 
 	<?php }
 }
