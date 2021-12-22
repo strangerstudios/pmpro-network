@@ -268,8 +268,7 @@ function pmpron_get_manage_sites_post() {
 	// If the Manage Sites page is set in the global variable, return it.
 	$manage_post = $pmpro_pages['manage_sites'];
 	if ( ! empty( $manage_post ) ) {
-		$manage_post = get_post( $manage_post );
-		return $manage_post;
+		return get_post( $manage_post );
 	}
 
 	// Check if the Manage Sites page is defined (this was an old way we offered before the UI).
