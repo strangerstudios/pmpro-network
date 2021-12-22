@@ -66,7 +66,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 			<?php echo esc_html( sprintf( __( 'You have used %s of %s site credits.', 'pmpro-network' ), intval($current_user->pmpron_site_credits), intval($current_user->pmpron_site_credits) ) ); ?>
 
 			<?php if(count($blog_ids) > intval($current_user->pmpron_site_credits)) { ?>
-				<?php echo sprintf( __( '%s of your sites have been deactivated.', 'pmpro-network' ), count($blog_ids) - intval($current_user->pmpron_site_credits) ); ?>
+				<?php echo esc_html( sprintf( __( '%s of your sites have been deactivated.', 'pmpro-network' ), count($blog_ids) - intval($current_user->pmpron_site_credits) ) ); ?>
+
 			<?php } ?>
 		<?php } else { ?>
 			<?php echo sprintf( __( 'You have used %s of %s site credits.', 'pmpro-network' ), count($blog_ids), intval($current_user->pmpron_site_credits) ); ?>
