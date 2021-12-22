@@ -105,7 +105,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 						</div>
 						<div class="pmpro_submit">
 							<input type="hidden" name="addsite" value="1" />
-							<input type="submit" name="submit" value="<?php esc_html_e( 'Add Site', 'pmpro-network' ); ?>" />
+							<input type="submit" name="submit" value="<?php esc_attr_e( 'Add Site', 'pmpro-network' ); ?>" />
+
 						</div>
 					</div> <!-- end .pmpro_checkout-fields -->
 				</div> <!-- end .pmpro_checkout -->
