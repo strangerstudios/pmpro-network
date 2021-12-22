@@ -343,7 +343,8 @@ function pmpron_pmpro_membership_level_after_other_settings() {
 			<tr>
 				<th scope="row" valign="top"><label for="pmpro_show_level"><?php esc_html_e( 'Number of Sites', 'pmpro-network' );?>:</label></th>
 				<td>
-					<input type="text" id="pmpro_site_credits" name="pmpro_site_credits" value="<?php echo $pmpro_site_credits; ?>" size="5" />
+					<input type="text" id="pmpro_site_credits" name="pmpro_site_credits" value="<?php echo esc_attr( $pmpro_site_credits ); ?>" size="5" />
+
 					<p class="description"><?php esc_html_e( 'Set the number of sites members of this level will be allowed to create as part of membership. Numerical values only (no letters or special characters).', 'pmpro-network'); ?></p>
 				</td>
 			</tr>
