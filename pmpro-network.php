@@ -276,7 +276,10 @@ function pmpron_get_manage_sites_post() {
 		//check if the manage sites slug is defined.
 		return get_page_by_path( PMPRO_NETWORK_MANAGE_SITES_SLUG );
 	}
+
+	return null;
 }
+
 
 /*
 	Add "Manage Sites" link to Member Links
