@@ -132,7 +132,8 @@ function pmpron_pmpro_checkout_boxes()
                         ?>
                         <div class="pmpro_checkout-field">
                             <p><?php esc_html_e( 'You will be reclaiming your previous sites.', 'pmpro-network' ); ?></p>
-                            <input type="hidden" name="blog_id" value="<?php echo $blog_id;?>" />
+                            <input type="hidden" name="blog_id" value="<?php echo esc_attr( $blog_id ); ?>" />
+
                         </div>
                     <?php
                     }
