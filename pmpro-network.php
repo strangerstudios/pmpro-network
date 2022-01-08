@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Member Network Sites Add On
 Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/
 Description: Create a network site for the member as part of membership to the main site.
-Version: .5.1
+Version: 0.5.2
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
 Text Domain: pmpro-network
@@ -306,7 +306,7 @@ function pmpron_pmpro_member_links_top() {
 
 	// Show a link to manage sites if the member has credits and the page exists.
 	if ( ! empty( $site_credits ) && ! empty( $manage_post ) ) { ?>
-		<li><a href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html( get_the_title( $manage_post ) ); ?></a></li>
+		<li><a href="<?php echo esc_url( get_permalink( $manage_post ) ); ?>"><?php esc_html_e( get_the_title( $manage_post ) ); ?></a></li>
 
 	<?php }
 }
