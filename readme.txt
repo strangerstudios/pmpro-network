@@ -1,8 +1,8 @@
 === Paid Memberships Pro - Member Network Sites Add On ===
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, multisite, network, network sites, wpmu
-Requires at least: 4.0
-Tested up to: 4.8
+Requires at least: 5.2
+Tested up to: 5.8.3
 Stable tag: 0.5.2
 
 Create a network site for the member as part of membership to the main site.
@@ -58,7 +58,7 @@ Please visit our premium support site at https://www.paidmembershipspro.com for 
 
 == Changelog ==
 
-= 0.5.2 - 2021-12-23 =
+= 0.5.2 - 2022-01-08 =
 * BUG FIX/ENHANCEMENT: Improved logic for generating the link to the "Manage Sites" page in Member Links section of account page.
 * ENHANCEMENT: Improved fields display on "Manage Sites" page to use no tables.
 * ENHANCEMENT: Make Add On translation ready.
