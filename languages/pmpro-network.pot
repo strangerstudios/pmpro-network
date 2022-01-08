@@ -1,0 +1,160 @@
+# Copyright (C) 2022 Paid Memberships Pro
+# This file is distributed under the same license as the Paid Memberships Pro - Member Network Sites Add On plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Paid Memberships Pro - Member Network Sites Add On 0.5.2\n"
+"Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
+"Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
+"Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2022-01-08T16:41:02+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.5.0\n"
+"X-Domain: pmpro-network\n"
+
+#. Plugin Name of the plugin
+msgid "Paid Memberships Pro - Member Network Sites Add On"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Create a network site for the member as part of membership to the main site."
+msgstr ""
+
+#. Author of the plugin
+msgid "Paid Memberships Pro"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://www.paidmembershipspro.com"
+msgstr ""
+
+#: pages/manage-sites.php:42
+msgid "Error creating site."
+msgstr ""
+
+#: pages/manage-sites.php:45
+msgid "Your site has been created."
+msgstr ""
+
+#: pages/manage-sites.php:66
+#: pages/manage-sites.php:73
+msgid "You have used %s of %s site credits."
+msgstr ""
+
+#: pages/manage-sites.php:69
+msgid "%s of your sites have been deactivated."
+msgstr ""
+
+#: pages/manage-sites.php:83
+msgid "Add a Site"
+msgstr ""
+
+#: pages/manage-sites.php:87
+#: pmpro-network.php:155
+msgid "Site Name"
+msgstr ""
+
+#: pages/manage-sites.php:98
+#: pmpro-network.php:166
+msgid "Your address will be %s"
+msgstr ""
+
+#: pages/manage-sites.php:98
+#: pmpro-network.php:166
+msgid "Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed."
+msgstr ""
+
+#: pages/manage-sites.php:103
+#: pmpro-network.php:171
+msgid "Site Title"
+msgstr ""
+
+#: pages/manage-sites.php:108
+msgid "Add Site"
+msgstr ""
+
+#: pages/manage-sites.php:120
+msgid "Your Sites"
+msgstr ""
+
+#: pages/manage-sites.php:139
+msgid "(deactivated)"
+msgstr ""
+
+#: pages/manage-sites.php:145
+#: pmpro-network.php:563
+msgid "Visit"
+msgstr ""
+
+#: pages/manage-sites.php:145
+#: pmpro-network.php:563
+msgid "Dashboard"
+msgstr ""
+
+#: pmpro-network.php:109
+msgid "Site Information"
+msgstr ""
+
+#: pmpro-network.php:110
+msgid "Sites Included: <strong>%s</strong>"
+msgstr ""
+
+#: pmpro-network.php:134
+msgid "You will be reclaiming your previous sites."
+msgstr ""
+
+#: pmpro-network.php:144
+msgid "You will be reclaiming your site <strong>%s</strong>."
+msgstr ""
+
+#: pmpro-network.php:172
+msgid "Required Field"
+msgstr ""
+
+#: pmpro-network.php:342
+#: pmpro-network.php:711
+#: pmpro-network.php:714
+msgid "Site Credits"
+msgstr ""
+
+#: pmpro-network.php:346
+msgid "Number of Sites"
+msgstr ""
+
+#: pmpro-network.php:350
+msgid "Set the number of sites members of this level will be allowed to create as part of membership. Numerical values only (no letters or special characters)."
+msgstr ""
+
+#: pmpro-network.php:562
+msgid "Your Primary Site"
+msgstr ""
+
+#: pmpro-network.php:691
+msgid "Below is a list of all sites you are an owner or member of."
+msgstr ""
+
+#: pmpro-network.php:724
+msgid "currently using %s"
+msgstr ""
+
+#: pmpro-network.php:766
+msgid "View Documentation"
+msgstr ""
+
+#: pmpro-network.php:766
+msgid "Docs"
+msgstr ""
+
+#: pmpro-network.php:767
+msgid "Visit Customer Support Forum"
+msgstr ""
+
+#: pmpro-network.php:767
+msgid "Support"
+msgstr ""
