@@ -454,7 +454,7 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 	}
 		
 	if( !empty($sitename) && !empty($sitetitle) ) {
-		if(pmpron_checkSiteName( $sitename, $sitetitle ) ) {
+		if(pmpron_checkSiteName( $sitename, $sitetitle, $current_user ) ) {
 			//all good
 			return $pmpro_continue_registration;	
 		} else {
@@ -484,9 +484,16 @@ add_filter( 'pmpro_registration_checks', 'pmpron_pmpro_registration_checks' );
 /*
 	Checks if a domain/site name is available.
 */
-function pmpron_checkSiteName( $sitename, $sitetitle )
+function pmpron_checkSiteName( $sitename, $sitetitle, $user = null )
 {
-	$result = wpmu_validate_blog_signup( $sitename, $sitetitle );
+	global $current_user;
+	
+	// assume Current User
+	if ( empty( $user ) ) {
+		$user = $current_user;
+	}
+	
+	$result = wpmu_validate_blog_signup( $sitename, $sitetitle, $user );
 	$errors = $result['errors']->get_error_messages();
 	if( empty( $errors ) ) {
 		return true;
