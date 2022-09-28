@@ -421,10 +421,10 @@ add_action("pmpro_paypalexpress_session_vars", "pmpron_pmpro_paypalexpress_sessi
 //require the fields and check for dupes
 function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 {
-	if ( !$pmpro_continue_registration )
-		return $pmpro_continue_registration;
-
 	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user, $pmpro_network_non_site_levels, $pmpro_level;
+	
+	if ( !$pmpro_continue_registration )
+		return $pmpro_continue_registration;	
 	
 	if(!empty($_REQUEST['sitename']))
 		$sitename = $_REQUEST['sitename'];
