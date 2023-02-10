@@ -182,7 +182,7 @@ function pmpron_pmpro_checkout_boxes()
 add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
 
 //update the user after checkout
-function pmpron_update_site_after_checkout($user_id)
+function pmpron_update_site_after_checkout( $user_id, $order )
 {
 	global $current_user, $current_site, $pmpro_network_non_site_levels;	
 	
@@ -214,7 +214,6 @@ function pmpron_update_site_after_checkout($user_id)
 	}
 	
 	$r = false;		//default return value
-	$user_level = pmpro_getMembershipLevelForUser($user_id);
 	
 	if(!empty($blog_id))
 	{
@@ -233,8 +232,7 @@ function pmpron_update_site_after_checkout($user_id)
 			$r = new WP_Error('pmpron_reactivation_failed', __('<strong>ERROR</strong>: Site reactivation failed.'));			
 		}
 	}
-	elseif( !empty( $user_level ) && !empty( $user_level->id ) && 
-			!in_array( $user_level->id, $pmpro_network_non_site_levels ) && pmpron_getSiteCredits( $user_level->id ) > 0 )
+	elseif( ! empty( $order->membership_id ) && ! in_array( $order->membership_id, $pmpro_network_non_site_levels ) && pmpron_getSiteCredits( $order->membership_id ) > 0 )
 	{
 		$blog_id = pmpron_addSite($sitename, $sitetitle);
 		if(is_wp_error($blog_id))
@@ -248,7 +246,7 @@ function pmpron_update_site_after_checkout($user_id)
 	
 	return $r;
 }
-add_action('pmpro_after_checkout', 'pmpron_update_site_after_checkout');
+add_action( 'pmpro_after_checkout', 'pmpron_update_site_after_checkout', 10, 2 );
 
 /*
 	Set the "Manage Sites" page in Memberships > Page Setting
@@ -572,10 +570,51 @@ function pmpron_pmpro_confirmation_message($message, $invoice)
 add_filter( 'pmpro_confirmation_message', 'pmpron_pmpro_confirmation_message', 10, 2 );
 
 /*
+ *	Set site credits, remove admin access and deactivate a blogs when a user's membership level changes.
+ */
+function pmpron_after_all_membership_level_changes( $old_user_levels ) {
+	foreach ( $old_user_levels as $user_id => $level_arr ) {
+		// Loop through all levels for this user and get the one with the most site credits.
+		$site_credits = 0;
+		$new_levels = pmpro_getMembershipLevelsForUser( $user_id );
+		foreach ( $new_levels as $level ) {
+			$site_credits = max( $site_credits, pmpron_getSiteCredits($level->id) );
+		}
+
+		update_user_meta( $user_id, 'pmpron_site_credits', $site_credits );
+		
+		// Activate user's blogs based on number of site credits they have.
+		$blog_ids = pmpron_getBlogsForUser( $user_id );	
+		$n = 0;
+		foreach( $blog_ids as $blog_id ) {
+			$n++;
+			
+			if ( $site_credits >= $n ) {
+				// As long as site_credits > $n, let's make sure this blog is active.
+				update_blog_status( $blog_id, 'deleted', '0' );
+				do_action( 'activate_blog', $blog_id );
+			} else {		
+				// Otherwise, let's deactivate this blog as long as it's not an admin site.
+				if ( ! user_can( 'manage_network', $user_id ) ) {
+					do_action( 'deactivate_blog', $blog_id );
+					update_blog_status( $blog_id, 'deleted', '1' );			
+				}
+			}
+		}		
+	}
+}
+add_action( 'pmpro_after_all_membership_level_changes', 'pmpron_after_all_membership_level_changes' );
+
+/*
 	Set site credits, remove admin access and deactivate a blogs when a user's membership level changes.
+
+	@deprecated TBD
 */
 function pmpron_pmpro_after_change_membership_level($level_id, $user_id)
-{	
+{
+	// Mark function as deprecated.
+	_deprecated_function( __FUNCTION__, 'TBD', 'pmpron_after_all_membership_level_changes' );
+
 	//set site credits		
 	if(!pmpro_hasMembershipLevel(NULL, $user_id)) {
 		$site_credits = 0;
@@ -609,7 +648,6 @@ function pmpron_pmpro_after_change_membership_level($level_id, $user_id)
 		}
 	}		
 }
-add_action( 'pmpro_after_change_membership_level', 'pmpron_pmpro_after_change_membership_level', 10, 2 );
 
 /*
 	Get an array of blog ids for a user.
