@@ -75,8 +75,9 @@ function pmpron_pmpro_checkout_boxes()
 	$level_id = null;
 
 	// Get the level info
-	if (isset($_REQUEST['level'])) {
-		$level_id = intval($_REQUEST['level']);
+	$level = pmpro_getLevelAtCheckout();
+	if ( ! empty( $level->id ) ) {
+		$level_id = intval( $level->id );
 	}
 
 	// Return if requested level is in non site levels array
