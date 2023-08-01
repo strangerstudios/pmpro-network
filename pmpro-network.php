@@ -105,10 +105,10 @@ function pmpron_pmpro_checkout_boxes()
     ?>
 	<div id="pmpro_site_fields" class="pmpro_checkout">
 		<hr />
-		<h3>
-			<span class="pmpro_checkout-h3-name"><?php esc_html_e( 'Site Information', 'pmpro-network'); ?></span>
-			<span class="pmpro_checkout-h3-msg"><?php echo sprintf( __( 'Sites Included: <strong>%s</strong>', 'pmpro-network' ), pmpron_getSiteCredits($level_id), 'pmpro-network'); ?></span>
-		</h3>
+		<h2>
+			<span class="pmpro_checkout-h2-name"><?php esc_html_e( 'Site Information', 'pmpro-network'); ?></span>
+			<span class="pmpro_checkout-h2-msg"><?php echo sprintf( __( 'Sites Included: <strong>%s</strong>', 'pmpro-network' ), pmpron_getSiteCredits($level_id), 'pmpro-network'); ?></span>
+		</h2>
 		<div class="pmpro_checkout-fields">
 			<?php
 				//check if the user already has a blog
@@ -339,7 +339,7 @@ function pmpron_pmpro_membership_level_after_other_settings() {
 		$pmpro_site_credits = '';
 	}
 	?>
-	<h3 class="topborder"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h3>
+	<h2 class="topborder"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h2>
 	<table class="form-table">
 		<tbody>
 			<tr>
@@ -708,7 +708,7 @@ function pmpron_profile_fields($profile_user)
 	if(current_user_can("manage_network"))
 	{		
 	?>
-		<h3><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h3>
+		<h2><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h2>
 		<table class="form-table">
 		<tr>
 			<th><label for="site_credits"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></label></th>
