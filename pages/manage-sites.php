@@ -79,9 +79,9 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 		<div class="pmpro_network_add_site">
 			<form id="pmpro_add_site" class="pmpro_form" action="" method="post">
 				<div class="pmpro_checkout">
-					<h3>
-						<span class="pmpro_checkout-h3-name"><?php esc_html_e('Add a Site', 'pmpro-network'); ?></span>
-					</h3>
+					<h2>
+						<span class="pmpro_checkout-h2-name"><?php esc_html_e('Add a Site', 'pmpro-network'); ?></span>
+					</h2>
 					<div class="pmpro_checkout-fields">
 						<div class="pmpro_checkout-field">
 							<label for="sitename"><?php esc_html_e('Site Name', 'pmpro-network'); ?></label>
@@ -116,9 +116,9 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 
 	<?php if ( ! empty( $blog_ids ) ) { ?>
 		<hr />
-		<h3>
-			<span class="pmpro_checkout-h3-name"><?php esc_html_e( 'Your Sites', 'pmpro-network' ); ?></span>
-		</h3>
+		<h2>
+			<span class="pmpro_checkout-h2-name"><?php esc_html_e( 'Your Sites', 'pmpro-network' ); ?></span>
+		</h2>
 		<ul class="pmpro_network_sites">
 			<?php
 				foreach ( $blog_ids as $blog_id ) {
