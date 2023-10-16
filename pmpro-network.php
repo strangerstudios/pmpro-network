@@ -421,10 +421,10 @@ add_action("pmpro_paypalexpress_session_vars", "pmpron_pmpro_paypalexpress_sessi
 //require the fields and check for dupes
 function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 {
-	if ( !$pmpro_continue_registration )
-		return $pmpro_continue_registration;
-
 	global $pmpro_msg, $pmpro_msgt, $current_site, $current_user, $pmpro_network_non_site_levels, $pmpro_level;
+	
+	if ( !$pmpro_continue_registration )
+		return $pmpro_continue_registration;	
 	
 	if(!empty($_REQUEST['sitename']))
 		$sitename = $_REQUEST['sitename'];
@@ -454,7 +454,7 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 	}
 		
 	if( !empty($sitename) && !empty($sitetitle) ) {
-		if(pmpron_checkSiteName( $sitename, $sitetitle ) ) {
+		if(pmpron_checkSiteName( $sitename, $sitetitle, $current_user ) ) {
 			//all good
 			return $pmpro_continue_registration;	
 		} else {
@@ -484,9 +484,16 @@ add_filter( 'pmpro_registration_checks', 'pmpron_pmpro_registration_checks' );
 /*
 	Checks if a domain/site name is available.
 */
-function pmpron_checkSiteName( $sitename, $sitetitle )
+function pmpron_checkSiteName( $sitename, $sitetitle, $user = null )
 {
-	$result = wpmu_validate_blog_signup( $sitename, $sitetitle );
+	global $current_user;
+	
+	// assume Current User
+	if ( empty( $user ) ) {
+		$user = $current_user;
+	}
+	
+	$result = wpmu_validate_blog_signup( $sitename, $sitetitle, $user );
 	$errors = $result['errors']->get_error_messages();
 	if( empty( $errors ) ) {
 		return true;
