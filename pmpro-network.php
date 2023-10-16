@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Member Network Sites Add On
 Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/
 Description: Create a network site for the member as part of membership to the main site.
-Version: 0.5.2
+Version: 0.5.3
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
 Text Domain: pmpro-network
@@ -616,12 +616,12 @@ add_action( 'pmpro_after_all_membership_level_changes', 'pmpron_after_all_member
 /*
 	Set site credits, remove admin access and deactivate a blogs when a user's membership level changes.
 
-	@deprecated TBD
+	@deprecated 0.5.3
 */
 function pmpron_pmpro_after_change_membership_level($level_id, $user_id)
 {
 	// Mark function as deprecated.
-	_deprecated_function( __FUNCTION__, 'TBD', 'pmpron_after_all_membership_level_changes' );
+	_deprecated_function( __FUNCTION__, '0.5.3', 'pmpron_after_all_membership_level_changes' );
 
 	//set site credits		
 	if(!pmpro_hasMembershipLevel(NULL, $user_id)) {
