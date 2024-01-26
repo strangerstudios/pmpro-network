@@ -52,7 +52,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 			}
 		}
 
-	} elseif ( ! empty ( $_POST['addsite'] ) && empty( $_POST['pmpron_add_site_nonce'] ) ) { // Nonce is missing entirely during page submit, throw an error.
+	} elseif ( ! empty ( $_POST['addsite'] ) ) { // Nonce is missing entirely during page submit or failed. Throw an error.
+
 		$pmpro_msg = __( 'Error creating site. Please try again', 'pmpro-network' );
 		$pmpro_msgt = "pmpro_error";
 	}
