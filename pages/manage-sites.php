@@ -5,7 +5,7 @@
 function pmpron_manage_sites_preheader() {
 	if(!is_admin()) {
 		global $post, $current_user;
-		if(!empty($post->post_content) && strpos($post->post_content, "[pmpron_manage_sites]") !== false) {
+		if(!empty($post->post_content) && strpos($post->post_content, "[pmpron_manage_sites") !== false) {
 			/*
 				Preheader operations here.
 			*/
