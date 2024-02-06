@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, multisite, network, network sites, wpmu
 Requires at least: 5.2
-Tested up to: 5.8.3
-Stable tag: 0.5.3
+Tested up to: 6.4
+Stable tag: 0.5.4
 
 Create a network site for the member as part of membership to the main site.
 
@@ -57,6 +57,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.5.4 - 2024-02-06 =
+* SECURITY: Improved security to the frontend shortcode to create and manage sites.
+
 = 0.5.3 - 2023-10-16 =
 * ENHANCEMENT: Updating `<h3>` tags to `<h2>` tags for better accessibility. #28 (@dwanjuki)
 * BUG FIX/ENHANCEMENT: Improving compatibility with Multiple Memberships Per User. #26 (@dparker1005)

@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Member Network Sites Add On
 Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/
 Description: Create a network site for the member as part of membership to the main site.
-Version: 0.5.3
+Version: 0.5.4
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
 Text Domain: pmpro-network
