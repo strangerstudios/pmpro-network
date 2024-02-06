@@ -5,7 +5,7 @@
 function pmpron_manage_sites_preheader() {
 	if(!is_admin()) {
 		global $post, $current_user;
-		if(!empty($post->post_content) && strpos($post->post_content, "[pmpron_manage_sites]") !== false) {
+		if(!empty($post->post_content) && strpos($post->post_content, "[pmpron_manage_sites") !== false) {
 			/*
 				Preheader operations here.
 			*/
@@ -32,33 +32,38 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 
 	global $current_user, $pmpro_msg, $pmpro_msgt;
 
-	//adding a site?
-	if(!empty($_POST['addsite'])) {
-		$sitename = $_REQUEST['sitename'];
-		$sitetitle = $_REQUEST['sitetitle'];
-		if(pmpron_checkSiteName( $sitename, $sitetitle )) {
-			$blog_id = pmpron_addSite($sitename, $sitetitle);
-			if(is_wp_error($blog_id)) {
+	// default values for site names.
+	$sitename = '';
+	$sitetitle = '';
+
+	//adding a site, check the submission and nonce.
+	if ( ! empty( $_POST['addsite'] ) && ( ! empty( $_POST['pmpron_add_site_nonce'] ) && wp_verify_nonce( $_POST['pmpron_add_site_nonce'], 'pmpron_add_site' ) ) ) {
+		$sitename = sanitize_text_field( $_REQUEST['sitename'] );
+		$sitetitle = sanitize_text_field( $_REQUEST['sitetitle'] );
+
+		if ( pmpron_checkSiteName( $sitename, $sitetitle ) ) {
+			$blog_id = pmpron_addSite( $sitename, $sitetitle );
+			if ( is_wp_error( $blog_id ) ) {
 				$pmpro_msg = __( 'Error creating site.', 'pmpro-network' );
 				$pmpro_msgt = "pmpro_error";
 			} else {
 				$pmpro_msg = __( 'Your site has been created.', 'pmpro-network' );
 				$pmpro_msgt = "pmpro_success";
 			}
-		} else {
-			//error message shown below
 		}
-	} else {
-		//default values for form
-		$sitename = '';
-		$sitetitle = '';
+
+	} elseif ( ! empty ( $_POST['addsite'] ) ) { // Nonce is missing entirely during page submit or failed. Throw an error.
+
+		$pmpro_msg = __( 'Error creating site. Please try again', 'pmpro-network' );
+		$pmpro_msgt = "pmpro_error";
 	}
 
 	//show page
 	$blog_ids = pmpron_getBlogsForUser($current_user->ID);
 
+	// Show the error message if there is an error.
+	if ( ! empty( $pmpro_msg ) ) { 
 	?>
-	<?php if(!empty($pmpro_msg)) { ?>
 		<div class="pmpro_message <?php echo $pmpro_msgt;?>"><?php echo $pmpro_msg;?></div>
 	<?php } ?>
 	<div class="pmpro_message <?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>pmpro_error<?php } ?>">
@@ -105,6 +110,7 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 						</div>
 						<div class="pmpro_submit">
 							<input type="hidden" name="addsite" value="1" />
+							<?php wp_nonce_field( 'pmpron_add_site', 'pmpron_add_site_nonce' ); ?>
 							<input type="submit" name="submit" value="<?php esc_attr_e( 'Add Site', 'pmpro-network' ); ?>" />
 
 						</div>
