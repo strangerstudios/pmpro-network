@@ -1,17 +1,17 @@
-# Copyright (C) 2023 Paid Memberships Pro
+# Copyright (C) 2024 Paid Memberships Pro
 # This file is distributed under the same license as the Paid Memberships Pro - Member Network Sites Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Member Network Sites Add On 0.5.3\n"
+"Project-Id-Version: Paid Memberships Pro - Member Network Sites Add On 0.5.4\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-10-16T15:59:34+00:00\n"
+"POT-Creation-Date: 2024-02-06T14:00:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.9.0\n"
 "X-Domain: pmpro-network\n"
 
 #. Plugin Name of the plugin
@@ -34,65 +34,69 @@ msgstr ""
 msgid "https://www.paidmembershipspro.com"
 msgstr ""
 
-#: pages/manage-sites.php:42
+#: pages/manage-sites.php:47
 msgid "Error creating site."
 msgstr ""
 
-#: pages/manage-sites.php:45
+#: pages/manage-sites.php:50
 msgid "Your site has been created."
 msgstr ""
 
-#: pages/manage-sites.php:66
-#: pages/manage-sites.php:73
+#: pages/manage-sites.php:57
+msgid "Error creating site. Please try again"
+msgstr ""
+
+#: pages/manage-sites.php:71
+#: pages/manage-sites.php:78
 msgid "You have used %s of %s site credits."
 msgstr ""
 
-#: pages/manage-sites.php:69
+#: pages/manage-sites.php:74
 msgid "%s of your sites have been deactivated."
 msgstr ""
 
-#: pages/manage-sites.php:83
+#: pages/manage-sites.php:88
 msgid "Add a Site"
 msgstr ""
 
-#: pages/manage-sites.php:87
+#: pages/manage-sites.php:92
 #: pmpro-network.php:156
 msgid "Site Name"
 msgstr ""
 
-#: pages/manage-sites.php:98
+#: pages/manage-sites.php:103
 #: pmpro-network.php:167
 msgid "Your address will be %s"
 msgstr ""
 
-#: pages/manage-sites.php:98
+#: pages/manage-sites.php:103
 #: pmpro-network.php:167
 msgid "Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed."
 msgstr ""
 
-#: pages/manage-sites.php:103
+#: pages/manage-sites.php:108
 #: pmpro-network.php:172
 msgid "Site Title"
 msgstr ""
 
-#: pages/manage-sites.php:108
+#: pages/manage-sites.php:114
 msgid "Add Site"
 msgstr ""
 
-#: pages/manage-sites.php:120
+#: pages/manage-sites.php:126
 msgid "Your Sites"
 msgstr ""
 
-#: pages/manage-sites.php:139
+#: pages/manage-sites.php:145
 msgid "(deactivated)"
 msgstr ""
 
-#: pages/manage-sites.php:145
+#: pages/manage-sites.php:151
 #: pmpro-network.php:569
 msgid "Visit"
 msgstr ""
 
-#: pages/manage-sites.php:145
+#: pages/manage-sites.php:151
 #: pmpro-network.php:569
 msgid "Dashboard"
 msgstr ""
