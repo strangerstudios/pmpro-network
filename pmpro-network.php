@@ -266,7 +266,7 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 		}
 	} elseif ( pmpron_getSiteCredits( $order->membership_id ) > 0 ) {
 		$blog_id = pmpron_addSite( $sitename, $sitetitle, $user_id );
-		if ( is_wp_error( $blog_id ) ) {
+		if ( is_wp_error( $blog_id ) || empty( $blog_id ) ) {
 			// Error activating the blog. Write to order notes.
 			/* translators: %1$s: Network Site Name, %2$s: Network Site Title. */
 			$order->notes .= sprintf( __( 'Site creation failed. Site Name: %1$s. Site Title: %2$s.', 'pmpro-network' ), $sitename, $sitetitle );
