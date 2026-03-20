@@ -390,8 +390,9 @@ add_action( 'pmpro_membership_level_after_other_settings', 'pmpron_pmpro_members
  *
  * @param string $sitename  The name of the site to add.
  * @param string $sitetitle The title of the site to add.
+ * @param int    $user_id   The user ID.
  *
- * @return bool|WP_Error The blog id of the site on success, WP_Error on failure.
+ * @return mixed blog id (int) on success, WP_Error on blog creation failure, false if no valid user.
  */
 function pmpron_addSite( $sitename, $sitetitle, $user_id = null ) {
 	global $current_user, $current_site;
@@ -401,6 +402,11 @@ function pmpron_addSite( $sitename, $sitetitle, $user_id = null ) {
 		$user = $current_user;
 	} else {
 		$user = get_userdata( $user_id );
+	}
+
+	// No user, bail.
+	if ( empty( $user ) ) {
+		return false;
 	}
 
 	// Figure out the new domain.
