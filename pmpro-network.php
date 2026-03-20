@@ -392,53 +392,68 @@ function pmpron_pmpro_membership_level_after_other_settings() {
 }
 add_action( 'pmpro_membership_level_after_other_settings', 'pmpron_pmpro_membership_level_after_other_settings' );
 
-/*
-	Function to add a site.
-	Takes sitename and sitetitle
-	Returns blog_id
-*/
-function pmpron_addSite($sitename, $sitetitle)
-{
+/**
+ * Function to add a site.
+ *
+ * @since unknown
+ * @since TBD Added $user_id arg.
+ *
+ * @param string $sitename  The name of the site to add.
+ * @param string $sitetitle The title of the site to add.
+ *
+ * @return bool|WP_Error The blog id of the site on success, WP_Error on failure.
+ */
+function pmpron_addSite( $sitename, $sitetitle, $user_id = null ) {
 	global $current_user, $current_site;
-		
-	//figure out the new domain	
+
+	// If no user ID was provided, default to the current user.
+	if ( empty( $user_id ) ) {
+		$user = $current_user;
+	} else {
+		$user = get_userdata( $user_id );
+	}
+
+	// Figure out the new domain.
 	$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
 
-	if ( !is_subdomain_install() )
-	{
+	if ( ! is_subdomain_install() ) {
 		$site = $current_site->domain;
 		$path = $current_site->path . $sitename;
-	}
-	else
-	{
+	} else {
 		$site = $sitename . '.' . $site_domain;
 		$path = $current_site->path;
 	}
 
-	//alright create the blog
-	$meta = apply_filters('signup_create_blog_meta', array ('lang_id' => 'en', 'public' => 0));
-	$blog_id = wpmu_create_blog($site, $path, $sitetitle, $current_user->ID, $meta);
-	
-	do_action("pmpro_network_new_site", $blog_id, $current_user->ID);
+	// Alright create the blog.
+	$meta    = apply_filters(
+		'signup_create_blog_meta',
+		array(
+			'lang_id' => 'en',
+			'public'  => 0,
+		)
+	);
+	$blog_id = wpmu_create_blog( $site, $path, $sitetitle, $user->ID, $meta );
 
-	if ( is_a($blog_id, "WP_Error") ) {
-		return new WP_Error('blogcreate_failed', __('<strong>ERROR</strong>: Site creation failed.'));
+	do_action( 'pmpro_network_new_site', $blog_id, $user->ID );
+
+	if ( is_a( $blog_id, 'WP_Error' ) ) {
+		return new WP_Error( 'blogcreate_failed', __( '<strong>ERROR</strong>: Site creation failed.' ) );
 	}
-			
-	//save array of all blog ids
-	$blog_ids = pmpron_getBlogsForUser($current_user->ID);	
-	if(!in_array($blog_id, $blog_ids))
-	{
+
+	// Save array of all blog ids.
+	$blog_ids = pmpron_getBlogsForUser( $user->ID );
+	if ( ! in_array( $blog_id, $blog_ids ) ) {
 		$blog_ids[] = $blog_id;
-		update_user_meta($current_user->ID, "pmpron_blog_ids", $blog_ids);
-		
-		//if this is the first site, set it as the main site
-		if(count($blog_ids) == 1)
-			update_user_meta($current_user->ID, "pmpron_blog_id", $blog_id);	
-	}				
-	
-	do_action('wpmu_activate_blog', $blog_id, $current_user->ID, $current_user->user_pass, $sitetitle, $meta);
-	
+		update_user_meta( $user->ID, 'pmpron_blog_ids', $blog_ids );
+
+		// If this is the first site, set it as the main site.
+		if ( count( $blog_ids ) === 1 ) {
+			update_user_meta( $user->ID, 'pmpron_blog_id', $blog_id );
+		}
+	}
+
+	do_action( 'wpmu_activate_blog', $blog_id, $user->ID, $user->user_pass, $sitetitle, $meta );
+
 	return $blog_id;
 }
 
