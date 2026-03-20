@@ -207,15 +207,16 @@ function pmpron_pmpro_added_order( $order ) {
 	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
 	$blog_id   = ! empty( $_REQUEST['blog_id'] ) ? absint( $_REQUEST['blog_id'] ) : '';
 
-	// Missing network site checkout params, bail.
-	if ( empty( $sitename ) && empty( $blog_id ) ) {
-		return;
-	}
-
 	// Save site details to order meta for use later.
-	update_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', $sitename );
-	update_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', $sitetitle );
-	update_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', $blog_id );
+	if ( ! empty( $sitename ) ) {
+		update_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', $sitename );
+	}
+	if ( ! empty( $sitetitle ) ) {
+		update_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', $sitetitle );
+	}
+	if ( ! empty( $blog_id ) ) {
+		update_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', $blog_id );
+	}
 }
 add_action( 'pmpro_added_order', 'pmpron_pmpro_added_order' );
 
