@@ -43,7 +43,7 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 
 		if ( pmpron_checkSiteName( $sitename, $sitetitle ) ) {
 			$blog_id = pmpron_addSite( $sitename, $sitetitle );
-			if ( is_wp_error( $blog_id ) ) {
+			if ( is_wp_error( $blog_id ) || empty( $blog_id ) ) {
 				$pmpro_msg = __( 'Error creating site.', 'pmpro-network' );
 				$pmpro_msgt = "pmpro_error";
 			} else {
