@@ -219,70 +219,60 @@ function pmpron_pmpro_added_order( $order ) {
 }
 add_action( 'pmpro_added_order', 'pmpron_pmpro_added_order' );
 
-//update the user after checkout
-function pmpron_update_site_after_checkout( $user_id, $order )
-{
-	global $current_user, $current_site, $pmpro_network_non_site_levels;	
-	
-	if(isset($_REQUEST['sitename']))
-	{   
-		//new site, on-site checkout
-		$sitename = $_REQUEST['sitename'];
-		$sitetitle = $_REQUEST['sitetitle'];
-		if(!empty($_REQUEST['blog_id']))
-			$blog_id = intval($_REQUEST['blog_id']);
+/**
+ * Update the user after checkout
+ *
+ * @since unknown
+ * @since TBD Fetching site details from order meta instead of request/session
+ *
+ * @param int         $user_id The ID of the user who completed checkout.
+ * @param MemberOrder $order The order object.
+ */
+function pmpron_update_site_after_checkout( $user_id, $order ) {
+	global $current_user, $current_site, $pmpro_network_non_site_levels;
+
+	// If we don't have an order, bail.
+	if ( empty( $order ) || empty( $order->id ) ) {
+		return;
 	}
-	elseif(isset($_REQUEST['blog_id']))
-	{
-		//reclaiming, on-site checkout
-		$blog_id = intval($_REQUEST['blog_id']);
+
+	// Membership level ID not set, or completed checkout is for a non-network site level, bail.
+	if ( empty( $order->membership_id ) || in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) {
+		return;
 	}
-	elseif(isset($_SESSION['sitename']))
-	{   
-		//new site, off-site checkout
-		$sitename = $_SESSION['sitename'];
-		$sitetitle = $_SESSION['sitetitle'];
-		if(!empty($_SESSION['blog_id']))
-			$blog_id = intval($_SESSION['blog_id']);
-	}	
-	elseif(isset($_SESSION['blog_id']))
-	{
-		//reclaiming, off-site checkout
-		$blog_id = intval($_SESSION['blog_id']);
+
+	// Pull site details from order.
+	$sitename  = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', true );
+	$sitetitle = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', true );
+	$blog_id   = get_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', true );
+
+	// No network site details in the order, bail.
+	if ( empty( $sitename ) && empty( $blog_id ) ) {
+		return;
 	}
-	
-	$r = false;		//default return value
-	
-	if(!empty($blog_id))
-	{
-		//reclaiming, first check that this id is associated with the user	
-		$all_blog_ids = pmpron_getBlogsForUser($user_id);
-		if(in_array($blog_id, $all_blog_ids))
-		{
-			//activate the blog
+
+	if ( ! empty( $blog_id ) ) {
+		// Reclaiming, first check that this id is associated with the user.
+		$all_blog_ids = pmpron_getBlogsForUser( $user_id );
+		if ( in_array( $blog_id, $all_blog_ids ) ) {
+			// Activate the blog.
 			update_blog_status( $blog_id, 'deleted', '0' );
 			do_action( 'activate_blog', $blog_id );
-			$r = true;
-		}		
-		else
-		{
-			//uh oh, were they trying to claim someone else's blog?
-			$r = new WP_Error('pmpron_reactivation_failed', __('<strong>ERROR</strong>: Site reactivation failed.'));			
+		} else {
+			// Someone else's blog, not reactivated. Write to order notes.
+			/* translators: %d: Numeric Blog ID. */
+			$order->notes .= sprintf( __( 'Site reactivation failed. Blog ID: %d.', 'pmpro-network' ), $blog_id );
+			$order->saveOrder();
+		}
+	} elseif ( pmpron_getSiteCredits( $order->membership_id ) > 0 ) {
+		$blog_id = pmpron_addSite( $sitename, $sitetitle, $user_id );
+		if ( is_wp_error( $blog_id ) ) {
+			// Error activating the blog. Write to order notes.
+			/* translators: %1$s: Network Site Name, %2$s: Network Site Title. */
+			$order->notes .= sprintf( __( 'Site creation failed. Site Name: %1$s. Site Title: %2$s.', 'pmpro-network' ), $sitename, $sitetitle );
+			$order->saveOrder();
 		}
 	}
-	elseif( ! empty( $order->membership_id ) && ! in_array( $order->membership_id, $pmpro_network_non_site_levels ) && pmpron_getSiteCredits( $order->membership_id ) > 0 )
-	{
-		$blog_id = pmpron_addSite($sitename, $sitetitle);
-		if(is_wp_error($blog_id))
-			$r = $blog_id;
-	}
-	
-	//clear session vars
-	unset($_SESSION['sitename']);
-	unset($_SESSION['sitetitle']);
-	unset($_SESSION['blog_id']);
-	
-	return $r;
 }
 add_action( 'pmpro_after_checkout', 'pmpron_update_site_after_checkout', 10, 2 );
 
