@@ -190,7 +190,7 @@ add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
  * @param MemberOrder $order The order object.
  */
 function pmpron_pmpro_added_order( $order ) {
-	global $current_user, $pmpro_network_non_site_levels;
+	global $pmpro_network_non_site_levels;
 
 	// If we don't have an order, bail.
 	if ( empty( $order ) || empty( $order->id ) ) {
@@ -229,7 +229,7 @@ add_action( 'pmpro_added_order', 'pmpron_pmpro_added_order' );
  * @param MemberOrder $order The order object.
  */
 function pmpron_update_site_after_checkout( $user_id, $order ) {
-	global $current_user, $current_site, $pmpro_network_non_site_levels;
+	global $current_site, $pmpro_network_non_site_levels;
 
 	// If we don't have an order, bail.
 	if ( empty( $order ) || empty( $order->id ) ) {
