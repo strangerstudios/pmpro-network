@@ -182,6 +182,43 @@ function pmpron_pmpro_checkout_boxes()
 }
 add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
 
+/**
+ * Save site details to order meta when an order is added for a network site level.
+ *
+ * @since TBD
+ *
+ * @param MemberOrder $order The order object.
+ */
+function pmpron_pmpro_added_order( $order ) {
+	global $current_user, $pmpro_network_non_site_levels;
+
+	// If we don't have an order, bail.
+	if ( empty( $order ) || empty( $order->id ) ) {
+		return;
+	}
+
+	// If the order level is not set or is in the non site levels array, bail.
+	if ( empty( $order->membership_id ) || in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) {
+		return;
+	}
+
+	// Get site name, site title, and blog id from request.
+	$sitename  = ! empty( $_REQUEST['sitename'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) ) : '';
+	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
+	$blog_id   = ! empty( $_REQUEST['blog_id'] ) ? absint( $_REQUEST['blog_id'] ) : '';
+
+	// Missing network site checkout params, bail.
+	if ( empty( $sitename ) && empty( $blog_id ) ) {
+		return;
+	}
+
+	// Save site details to order meta for use later.
+	update_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', $sitename );
+	update_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', $sitetitle );
+	update_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', $blog_id );
+}
+add_action( 'pmpro_added_order', 'pmpron_pmpro_added_order' );
+
 //update the user after checkout
 function pmpron_update_site_after_checkout( $user_id, $order )
 {
