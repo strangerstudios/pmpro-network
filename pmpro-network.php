@@ -431,7 +431,7 @@ function pmpron_addSite( $sitename, $sitetitle, $user_id = null ) {
 	$blog_id = wpmu_create_blog( $site, $path, $sitetitle, $user->ID, $meta );
 
 	if ( is_a( $blog_id, 'WP_Error' ) ) {
-		return new WP_Error( 'blogcreate_failed', __( '<strong>ERROR</strong>: Site creation failed.' ) );
+		return new WP_Error( 'blogcreate_failed', __( '<strong>ERROR</strong>: Site creation failed.', 'pmpro_network' ) );
 	}
 
 	do_action( 'pmpro_network_new_site', $blog_id, $user->ID );
