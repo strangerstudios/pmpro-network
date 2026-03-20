@@ -457,18 +457,6 @@ function pmpron_addSite( $sitename, $sitetitle, $user_id = null ) {
 	return $blog_id;
 }
 
-/*
-These bits are required for PayPal Express only.
-*/
-function pmpron_pmpro_paypalexpress_session_vars()
-{
-	//save our added fields in session while the user goes off to PayPal
-	$_SESSION['sitename'] = $_REQUEST['sitename'];
-	$_SESSION['sitetitle'] = $_REQUEST['sitetitle'];
-	$_SESSION['blog_id'] = $_REQUEST['blog_id'];
-}
-add_action("pmpro_paypalexpress_session_vars", "pmpron_pmpro_paypalexpress_session_vars");
-
 //require the fields and check for dupes
 function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 {
