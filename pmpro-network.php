@@ -205,7 +205,7 @@ function pmpron_pmpro_added_order( $order ) {
 	// Get site name, site title, and blog id from request.
 	$sitename  = ! empty( $_REQUEST['sitename'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) ) : '';
 	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
-	$blog_id   = ! empty( $_REQUEST['blog_id'] ) ? absint( $_REQUEST['blog_id'] ) : '';
+	$blog_id   = ! empty( $_REQUEST['blog_id'] ) ? absint( $_REQUEST['blog_id'] ) : 0;
 
 	// Save site details to order meta for use later.
 	if ( ! empty( $sitename ) ) {
@@ -432,7 +432,7 @@ function pmpron_addSite( $sitename, $sitetitle, $user_id = null ) {
 	$blog_id = wpmu_create_blog( $site, $path, $sitetitle, $user->ID, $meta );
 
 	if ( is_a( $blog_id, 'WP_Error' ) ) {
-		return new WP_Error( 'blogcreate_failed', __( '<strong>ERROR</strong>: Site creation failed.', 'pmpro_network' ) );
+		return new WP_Error( 'blogcreate_failed', __( '<strong>ERROR</strong>: Site creation failed.', 'pmpro-network' ) );
 	}
 
 	do_action( 'pmpro_network_new_site', $blog_id, $user->ID );
