@@ -198,7 +198,7 @@ function pmpron_pmpro_added_order( $order ) {
 	}
 
 	// If the order level is not set or is in the non site levels array, bail.
-	if ( empty( $order->membership_id ) || in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) {
+	if ( empty( $order->membership_id ) || ( ( is_array( $pmpro_network_non_site_levels ) && in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) ) ) {
 		return;
 	}
 
@@ -238,7 +238,7 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 	}
 
 	// Membership level ID not set, or completed checkout is for a non-network site level, bail.
-	if ( empty( $order->membership_id ) || in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) {
+	if ( empty( $order->membership_id ) || ( ( is_array( $pmpro_network_non_site_levels ) && in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) ) ) {
 		return;
 	}
 
