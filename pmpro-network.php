@@ -245,7 +245,7 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 	// Pull site details from order.
 	$sitename  = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', true );
 	$sitetitle = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', true );
-	$blog_id   = get_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', true );
+	$blog_id   = absint( get_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', true ) );
 
 	// No network site details in the order, bail.
 	if ( empty( $sitename ) && empty( $blog_id ) ) {
