@@ -240,7 +240,7 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 	// Pull site details from order.
 	$sitename  = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', true );
 	$sitetitle = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', true );
-	$blog_id   = absint( get_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', true ) );
+	$blog_id   = get_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', true );
 
 	// No network site details in the order, bail.
 	if ( empty( $sitename ) && empty( $blog_id ) ) {
@@ -250,7 +250,7 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 	if ( ! empty( $blog_id ) ) {
 		// Reclaiming, first check that this id is associated with the user.
 		$all_blog_ids = pmpron_getBlogsForUser( $user_id );
-		if ( in_array( $blog_id, $all_blog_ids, true ) ) {
+		if ( in_array( $blog_id, $all_blog_ids ) ) {
 			// Activate the blog.
 			update_blog_status( $blog_id, 'deleted', '0' );
 			do_action( 'activate_blog', $blog_id );
