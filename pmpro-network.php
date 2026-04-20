@@ -91,8 +91,8 @@ function pmpron_pmpro_checkout_boxes()
 	
 	if(!empty($_REQUEST['sitename']))
 	{
-		$sitename = $_REQUEST['sitename'];
-		$sitetitle = $_REQUEST['sitetitle']; 
+		$sitename  = sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) );
+		$sitetitle = sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) );
 	}
     else {
         $sitename = '';
