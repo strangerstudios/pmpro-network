@@ -255,7 +255,7 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 	if ( ! empty( $blog_id ) ) {
 		// Reclaiming, first check that this id is associated with the user.
 		$all_blog_ids = pmpron_getBlogsForUser( $user_id );
-		if ( in_array( $blog_id, $all_blog_ids ) ) {
+		if ( in_array( $blog_id, $all_blog_ids, true ) ) {
 			// Activate the blog.
 			update_blog_status( $blog_id, 'deleted', '0' );
 			do_action( 'activate_blog', $blog_id );
