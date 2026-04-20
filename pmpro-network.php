@@ -264,10 +264,11 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 		$blog_id = pmpron_addSite( $sitename, $sitetitle, $user_id );
 		if ( is_wp_error( $blog_id ) ) {
 			$order->notes .= sprintf( __( 'Site creation error: %s', 'pmpro-network' ), $blog_id->get_error_message() ) . "\n";
+			$order->saveOrder();
 		} elseif ( empty( $blog_id ) ) {
 			$order->notes .= __( 'Site creation failed: User not found.', 'pmpro-network' ) . "\n";
+			$order->saveOrder();
 		}
-		$order->saveOrder();
 	}
 }
 add_action( 'pmpro_after_checkout', 'pmpron_update_site_after_checkout', 10, 2 );
