@@ -94,11 +94,6 @@ function pmpron_pmpro_checkout_boxes()
 		$sitename = $_REQUEST['sitename'];
 		$sitetitle = $_REQUEST['sitetitle']; 
 	}
-	elseif(!empty($_SESSION['sitename']))
-	{
-		$sitename = $_SESSION['sitename'];
-		$sitetitle = $_SESSION['sitetitle']; 
-	}
     else {
         $sitename = '';
         $sitetitle = '';
