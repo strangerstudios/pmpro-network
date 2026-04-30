@@ -2,16 +2,13 @@
 
 defined( 'ABSPATH' ) || die( 'File cannot be accessed directly' );
 
-/**
- * Class PMPro_N_fields_update
- */
-class PMPro_N_fields_update  extends PMPro_Member_Edit_Panel {
+class PMPron_Member_Edit_Panel_Site_Credits extends PMPro_Member_Edit_Panel {
 
 	/**
 	 * Set up the panel.
 	 */
 	public function __construct() {
-		$this->slug = 'pmpro-network';
+		$this->slug = 'site-credits';
 		$this->title = __( 'Site Credits', 'pmpro-network' );
 	}
 
@@ -19,16 +16,15 @@ class PMPro_N_fields_update  extends PMPro_Member_Edit_Panel {
 	 * Display the panel contents.
 	 *
 	 * @since TBD
-	 * return void
 	 */
 	protected function display_panel_contents() {
-		// Get the user being edited.
-		$user = self::get_user();
-
-		//Bail if user can't manage network
-		if( ! current_user_can( 'manage_network' ) ) {
+		// Bail if user can't manage the network.
+		if ( ! current_user_can( 'manage_network' ) ) {
 			return;
 		}
+
+		// Get the user being edited.
+		$user = self::get_user();
 
 		// Get the user's site credits.
 		$all_blog_ids = pmpron_getBlogsForUser( $user->ID );
@@ -47,30 +43,30 @@ class PMPro_N_fields_update  extends PMPro_Member_Edit_Panel {
 		<p class="submit">
 			<button class="button button-primary" type="submit"><?php esc_html_e( 'Update', 'pmpro-network' ); ?></button>
 		</p>
-	<?php
+		<?php
 	}
 
 	/**
 	 * Save the panel.
 	 *
 	 * @since TBD
-	 * return void
 	 */
 	public function save() {
-		// Get the user being edited.
-		$user = self::get_user();
-
-		//Bail if user can't manage network
-		if( ! current_user_can( 'manage_network' ) ) {
+		// Bail if user can't manage the network.
+		if ( ! current_user_can( 'manage_network' ) ) {
 			return;
 		}
+
+		// Get the user being edited.
+		$user = self::get_user();
 
 		// Get the site credits.
 		$site_credits = isset( $_POST['site_credits'] ) ? intval( $_POST['site_credits'] ) : 0;
 
 		// Update the user's site credits.
 		update_user_meta( $user->ID, 'pmpron_site_credits', $site_credits );
-		//Show a success message
+
+		// Show a success message.
 		pmpro_setMessage( __( 'Site credits updated.', 'pmpro-network' ), 'pmpro_success' );
 	}
 }

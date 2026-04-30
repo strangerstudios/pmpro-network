@@ -746,28 +746,27 @@ function pmpron_myblogs_allblogs_options()
 add_action( 'myblogs_allblogs_options', 'pmpron_myblogs_allblogs_options' );
 
 /**
- * Add a panel to the Edit Member dashboard page.
+ * Add the Site Credits panel to the Edit Member dashboard page.
  *
  * @since TBD
  *
  * @param array $panels Array of panels.
  * @return array Array of panels.
-
  */
-function pmpron_member_edit_panels_reasons( $panels ) {
+function pmpron_member_edit_panels( $panels ) {
 	// If the class doesn't exist and the abstract class does, require the class.
-	if ( ! class_exists( 'PMPro_N_fields_update' ) && class_exists( 'PMPro_Member_Edit_Panel' ) ) {
-		require_once( dirname( __FILE__ ) . '/classes/pmpron-class-member-edit-panel-fields.php' );
+	if ( ! class_exists( 'PMPron_Member_Edit_Panel_Site_Credits' ) && class_exists( 'PMPro_Member_Edit_Panel' ) ) {
+		require_once( dirname( __FILE__ ) . '/classes/pmpron-class-member-edit-panel-site-credits.php' );
 	}
 
 	// If the class exists, add a panel.
-	if ( class_exists( 'PMPro_N_fields_update' ) ) {
-		$panels[] = new PMPro_N_fields_update();
+	if ( class_exists( 'PMPron_Member_Edit_Panel_Site_Credits' ) ) {
+		$panels[] = new PMPron_Member_Edit_Panel_Site_Credits();
 	}
 
 	return $panels;
 }
-add_filter( 'pmpro_member_edit_panels', 'pmpron_member_edit_panels_reasons' );
+add_filter( 'pmpro_member_edit_panels', 'pmpron_member_edit_panels' );
 
 /*
 	When a site is deleted, free up the site credit and blog id
