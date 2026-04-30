@@ -745,52 +745,28 @@ function pmpron_myblogs_allblogs_options()
 }
 add_action( 'myblogs_allblogs_options', 'pmpron_myblogs_allblogs_options' );
 
-/*
-	Add site credits field to profile for admins to adjust
-*/
-//show fields
-function pmpron_profile_fields($profile_user)
-{	
-	if(current_user_can("manage_network"))
-	{		
-	?>
-		<h2><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h2>
-		<table class="form-table">
-		<tr>
-			<th><label for="site_credits"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></label></th>
-			<td>
-				<?php
-					//how many sites have they created?	
-					$all_blog_ids = pmpron_getBlogsForUser($profile_user->ID);	
-					$num = count($all_blog_ids);
-						
-					//how many can they create?
-					$site_credits = $profile_user->pmpron_site_credits;						
-				?>
-				<input type="text" id="site_credits" name="site_credits" size="5" value="<?php echo esc_attr( $site_credits ); ?>" /> <em><?php echo esc_html( sprintf( __( 'currently using %s', 'pmpro-network' ), $num ) ); ?></em>
-
-			</td>
-		</tr>
-		</table>
-	<?php
+/**
+ * Add the Site Credits panel to the Edit Member dashboard page.
+ *
+ * @since TBD
+ *
+ * @param array $panels Array of panels.
+ * @return array Array of panels.
+ */
+function pmpron_member_edit_panels( $panels ) {
+	// If the class doesn't exist and the abstract class does, require the class.
+	if ( ! class_exists( 'PMPron_Member_Edit_Panel_Site_Credits' ) && class_exists( 'PMPro_Member_Edit_Panel' ) ) {
+		require_once( dirname( __FILE__ ) . '/classes/pmpron-class-member-edit-panel-site-credits.php' );
 	}
-}
-add_action( 'show_user_profile', 'pmpron_profile_fields' );
-add_action( 'edit_user_profile', 'pmpron_profile_fields' );
 
-//save fields
-function pmpron_profile_fields_update($user_id)
-{
-	//make sure they can edit
-	if ( !current_user_can( 'manage_network') )
-		return false;
+	// If the class exists, add a panel.
+	if ( class_exists( 'PMPron_Member_Edit_Panel_Site_Credits' ) ) {
+		$panels[] = new PMPron_Member_Edit_Panel_Site_Credits();
+	}
 
-	//if site credits is there, set it
-	if(isset($_POST['site_credits']))
-		update_user_meta( $user_id, 'pmpron_site_credits', intval($_POST['site_credits']) );	
+	return $panels;
 }
-add_action( 'profile_update', 'pmpron_profile_fields_update' );
-add_action( 'user_edit_form_tag', 'pmpron_profile_fields_update' );
+add_filter( 'pmpro_member_edit_panels', 'pmpron_member_edit_panels' );
 
 /*
 	When a site is deleted, free up the site credit and blog id
