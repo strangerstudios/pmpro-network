@@ -10,6 +10,11 @@ Text Domain: pmpro-network
 Domain Path: /languages
 */
 
+// This plugin only operates on a multisite network. Bail on single-site installs.
+if ( ! is_multisite() ) {
+	return;
+}
+
 /**
  * Load the languages folder for translations.
  */
@@ -68,9 +73,8 @@ add_action('init', 'pmpron_init');
 	First we need to add some fields to the checkout page.
 */
 //add the fields to the form 
-function pmpron_pmpro_checkout_boxes() 
-{
-	global $current_user, $wpdb, $pmpro_network_non_site_levels;
+function pmpron_pmpro_checkout_boxes() {
+	global $current_user, $wpdb, $pmpro_network_non_site_levels, $current_site;
 
 	$level_id = null;
 
@@ -151,7 +155,6 @@ function pmpron_pmpro_checkout_boxes()
 					<label for="sitename"><?php esc_html_e( 'Site Name', 'pmpro-network' ); ?></label>
 					<input id="sitename" name="sitename" type="text" class="input" size="30" value="<?php echo esc_attr(stripslashes($sitename)); ?>" /><span class="pmpro_asterisk"> <abbr title="Required Field">*</abbr></span>				
 					<?php
-						global $current_site;
 						$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
 					
 						if ( !is_subdomain_install() )
@@ -326,7 +329,7 @@ function pmpron_pmpro_membership_level_after_other_settings() {
 		$pmpro_site_credits = '';
 	}
 	?>
-	<h2 class="topborder"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h2>
+	<h3 class="topborder"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h3>
 	<table class="form-table">
 		<tbody>
 			<tr>
