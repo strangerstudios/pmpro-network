@@ -10,6 +10,11 @@ Text Domain: pmpro-network
 Domain Path: /languages
 */
 
+// This plugin only operates on a multisite network. Bail on single-site installs.
+if ( ! is_multisite() ) {
+	return;
+}
+
 /**
  * Load the languages folder for translations.
  */
@@ -160,70 +165,63 @@ function pmpron_pmpro_checkout_boxes() {
 }
 add_action( 'pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes' );
 
-//update the user after checkout
-function pmpron_update_site_after_checkout( $user_id, $order )
-{
-	global $current_user, $current_site, $pmpro_network_non_site_levels;	
-	
-	if(isset($_REQUEST['sitename']))
-	{   
-		//new site, on-site checkout
-		$sitename = $_REQUEST['sitename'];
-		$sitetitle = $_REQUEST['sitetitle'];
-		if(!empty($_REQUEST['blog_id']))
-			$blog_id = intval($_REQUEST['blog_id']);
+/**
+ * Update the user after checkout
+ *
+ * @since unknown
+ * @since TBD Site details are pulled from $_REQUEST (which PMPro core repopulates from order meta on offsite/delayed checkout returns).
+ *
+ * @param int         $user_id The ID of the user who completed checkout.
+ * @param MemberOrder $order The order object.
+ */
+function pmpron_update_site_after_checkout( $user_id, $order ) {
+	global $pmpro_network_non_site_levels;
+
+	// If we don't have an order, bail.
+	if ( empty( $order ) || empty( $order->id ) ) {
+		return;
 	}
-	elseif(isset($_REQUEST['blog_id']))
-	{
-		//reclaiming, on-site checkout
-		$blog_id = intval($_REQUEST['blog_id']);
+
+	// Membership level ID not set, or completed checkout is for a non-network site level, bail.
+	if ( empty( $order->membership_id ) || ( is_array( $pmpro_network_non_site_levels ) && in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) ) {
+		return;
 	}
-	elseif(isset($_SESSION['sitename']))
-	{   
-		//new site, off-site checkout
-		$sitename = $_SESSION['sitename'];
-		$sitetitle = $_SESSION['sitetitle'];
-		if(!empty($_SESSION['blog_id']))
-			$blog_id = intval($_SESSION['blog_id']);
-	}	
-	elseif(isset($_SESSION['blog_id']))
-	{
-		//reclaiming, off-site checkout
-		$blog_id = intval($_SESSION['blog_id']);
+
+	// Pull site details from $_REQUEST. For offsite/delayed checkout flows, PMPro core
+	// repopulates $_REQUEST from order meta via pmpro_pull_checkout_data_from_order()
+	// before pmpro_after_checkout fires.
+	$sitename  = ! empty( $_REQUEST['sitename'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) ) : '';
+	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
+	$blog_id   = ! empty( $_REQUEST['blog_id'] ) ? absint( $_REQUEST['blog_id'] ) : 0;
+
+	// No network site details in the request, bail.
+	if ( empty( $sitename ) && empty( $blog_id ) ) {
+		return;
 	}
-	
-	$r = false;		//default return value
-	
-	if(!empty($blog_id))
-	{
-		//reclaiming, first check that this id is associated with the user	
-		$all_blog_ids = pmpron_getBlogsForUser($user_id);
-		if(in_array($blog_id, $all_blog_ids))
-		{
-			//activate the blog
+
+	if ( ! empty( $blog_id ) ) {
+		// Reclaiming, first check that this id is associated with the user.
+		$all_blog_ids = pmpron_getBlogsForUser( $user_id );
+		if ( in_array( $blog_id, $all_blog_ids ) ) {
+			// Activate the blog.
 			update_blog_status( $blog_id, 'deleted', '0' );
 			do_action( 'activate_blog', $blog_id );
-			$r = true;
-		}		
-		else
-		{
-			//uh oh, were they trying to claim someone else's blog?
-			$r = new WP_Error('pmpron_reactivation_failed', __('<strong>ERROR</strong>: Site reactivation failed.'));			
+		} else {
+			// Someone else's blog, not reactivated. Write to order notes.
+			/* translators: %d: Numeric Blog ID. */
+			$order->notes .= sprintf( __( 'Site reactivation failed. Blog ID: %d.', 'pmpro-network' ), $blog_id ) . "\n";
+			$order->saveOrder();
+		}
+	} elseif ( pmpron_getSiteCredits( $order->membership_id ) > 0 ) {
+		$blog_id = pmpron_addSite( $sitename, $sitetitle, $user_id );
+		if ( is_wp_error( $blog_id ) ) {
+			$order->notes .= sprintf( __( 'Site creation error: %s', 'pmpro-network' ), $blog_id->get_error_message() ) . "\n";
+			$order->saveOrder();
+		} elseif ( empty( $blog_id ) ) {
+			$order->notes .= __( 'Site creation failed: User not found.', 'pmpro-network' ) . "\n";
+			$order->saveOrder();
 		}
 	}
-	elseif( ! empty( $order->membership_id ) && ! in_array( $order->membership_id, $pmpro_network_non_site_levels ) && pmpron_getSiteCredits( $order->membership_id ) > 0 )
-	{
-		$blog_id = pmpron_addSite($sitename, $sitetitle);
-		if(is_wp_error($blog_id))
-			$r = $blog_id;
-	}
-	
-	//clear session vars
-	unset($_SESSION['sitename']);
-	unset($_SESSION['sitetitle']);
-	unset($_SESSION['blog_id']);
-	
-	return $r;
 }
 add_action( 'pmpro_after_checkout', 'pmpron_update_site_after_checkout', 10, 2 );
 
@@ -316,7 +314,7 @@ function pmpron_pmpro_membership_level_after_other_settings() {
 		$pmpro_site_credits = '';
 	}
 	?>
-	<h2 class="topborder"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h2>
+	<h3 class="topborder"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h3>
 	<table class="form-table">
 		<tbody>
 			<tr>
@@ -333,67 +331,76 @@ function pmpron_pmpro_membership_level_after_other_settings() {
 }
 add_action( 'pmpro_membership_level_after_other_settings', 'pmpron_pmpro_membership_level_after_other_settings' );
 
-/*
-	Function to add a site.
-	Takes sitename and sitetitle
-	Returns blog_id
-*/
-function pmpron_addSite($sitename, $sitetitle)
-{
+/**
+ * Function to add a site.
+ *
+ * @since unknown
+ * @since TBD Added $user_id arg.
+ *
+ * @param string $sitename  The name of the site to add.
+ * @param string $sitetitle The title of the site to add.
+ * @param int    $user_id   The user ID.
+ *
+ * @return mixed blog id (int) on success, WP_Error on blog creation failure, false if no valid user.
+ */
+function pmpron_addSite( $sitename, $sitetitle, $user_id = null ) {
 	global $current_user, $current_site;
-		
-	//figure out the new domain	
+
+	// If no user ID was provided, default to the current user.
+	if ( empty( $user_id ) ) {
+		$user = $current_user;
+	} else {
+		$user = get_userdata( $user_id );
+	}
+
+	// No user, bail.
+	if ( empty( $user ) ) {
+		return false;
+	}
+
+	// Figure out the new domain.
 	$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
 
-	if ( !is_subdomain_install() )
-	{
+	if ( ! is_subdomain_install() ) {
 		$site = $current_site->domain;
 		$path = $current_site->path . $sitename;
-	}
-	else
-	{
+	} else {
 		$site = $sitename . '.' . $site_domain;
 		$path = $current_site->path;
 	}
 
-	//alright create the blog
-	$meta = apply_filters('signup_create_blog_meta', array ('lang_id' => 'en', 'public' => 0));
-	$blog_id = wpmu_create_blog($site, $path, $sitetitle, $current_user->ID, $meta);
-	
-	do_action("pmpro_network_new_site", $blog_id, $current_user->ID);
+	// Alright create the blog.
+	$meta    = apply_filters(
+		'signup_create_blog_meta',
+		array(
+			'lang_id' => 'en',
+			'public'  => 0,
+		)
+	);
+	$blog_id = wpmu_create_blog( $site, $path, $sitetitle, $user->ID, $meta );
 
-	if ( is_a($blog_id, "WP_Error") ) {
-		return new WP_Error('blogcreate_failed', __('<strong>ERROR</strong>: Site creation failed.'));
+	if ( is_a( $blog_id, 'WP_Error' ) ) {
+		return new WP_Error( 'blogcreate_failed', __( '<strong>ERROR</strong>: Site creation failed.', 'pmpro-network' ) );
 	}
-			
-	//save array of all blog ids
-	$blog_ids = pmpron_getBlogsForUser($current_user->ID);	
-	if(!in_array($blog_id, $blog_ids))
-	{
+
+	do_action( 'pmpro_network_new_site', $blog_id, $user->ID );
+
+	// Save array of all blog ids.
+	$blog_ids = pmpron_getBlogsForUser( $user->ID );
+	if ( ! in_array( $blog_id, $blog_ids ) ) {
 		$blog_ids[] = $blog_id;
-		update_user_meta($current_user->ID, "pmpron_blog_ids", $blog_ids);
-		
-		//if this is the first site, set it as the main site
-		if(count($blog_ids) == 1)
-			update_user_meta($current_user->ID, "pmpron_blog_id", $blog_id);	
-	}				
-	
-	do_action('wpmu_activate_blog', $blog_id, $current_user->ID, $current_user->user_pass, $sitetitle, $meta);
-	
+		update_user_meta( $user->ID, 'pmpron_blog_ids', $blog_ids );
+
+		// If this is the first site, set it as the main site.
+		if ( count( $blog_ids ) === 1 ) {
+			update_user_meta( $user->ID, 'pmpron_blog_id', $blog_id );
+		}
+	}
+
+	do_action( 'wpmu_activate_blog', $blog_id, $user->ID, $user->user_pass, $sitetitle, $meta );
+
 	return $blog_id;
 }
-
-/*
-These bits are required for PayPal Express only.
-*/
-function pmpron_pmpro_paypalexpress_session_vars()
-{
-	//save our added fields in session while the user goes off to PayPal
-	$_SESSION['sitename'] = $_REQUEST['sitename'];
-	$_SESSION['sitetitle'] = $_REQUEST['sitetitle'];
-	$_SESSION['blog_id'] = $_REQUEST['blog_id'];
-}
-add_action("pmpro_paypalexpress_session_vars", "pmpron_pmpro_paypalexpress_session_vars");
 
 //require the fields and check for dupes
 function pmpron_pmpro_registration_checks($pmpro_continue_registration)
@@ -723,52 +730,28 @@ function pmpron_myblogs_allblogs_options()
 }
 add_action( 'myblogs_allblogs_options', 'pmpron_myblogs_allblogs_options' );
 
-/*
-	Add site credits field to profile for admins to adjust
-*/
-//show fields
-function pmpron_profile_fields($profile_user)
-{	
-	if(current_user_can("manage_network"))
-	{		
-	?>
-		<h2><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></h2>
-		<table class="form-table">
-		<tr>
-			<th><label for="site_credits"><?php esc_html_e( 'Site Credits', 'pmpro-network' ); ?></label></th>
-			<td>
-				<?php
-					//how many sites have they created?	
-					$all_blog_ids = pmpron_getBlogsForUser($profile_user->ID);	
-					$num = count($all_blog_ids);
-						
-					//how many can they create?
-					$site_credits = $profile_user->pmpron_site_credits;						
-				?>
-				<input type="text" id="site_credits" name="site_credits" size="5" value="<?php echo esc_attr( $site_credits ); ?>" /> <em><?php echo esc_html( sprintf( __( 'currently using %s', 'pmpro-network' ), $num ) ); ?></em>
-
-			</td>
-		</tr>
-		</table>
-	<?php
+/**
+ * Add the Site Credits panel to the Edit Member dashboard page.
+ *
+ * @since TBD
+ *
+ * @param array $panels Array of panels.
+ * @return array Array of panels.
+ */
+function pmpron_member_edit_panels( $panels ) {
+	// If the class doesn't exist and the abstract class does, require the class.
+	if ( ! class_exists( 'PMPron_Member_Edit_Panel_Site_Credits' ) && class_exists( 'PMPro_Member_Edit_Panel' ) ) {
+		require_once( dirname( __FILE__ ) . '/classes/pmpron-class-member-edit-panel-site-credits.php' );
 	}
-}
-add_action( 'show_user_profile', 'pmpron_profile_fields' );
-add_action( 'edit_user_profile', 'pmpron_profile_fields' );
 
-//save fields
-function pmpron_profile_fields_update($user_id)
-{
-	//make sure they can edit
-	if ( !current_user_can( 'manage_network') )
-		return false;
+	// If the class exists, add a panel.
+	if ( class_exists( 'PMPron_Member_Edit_Panel_Site_Credits' ) ) {
+		$panels[] = new PMPron_Member_Edit_Panel_Site_Credits();
+	}
 
-	//if site credits is there, set it
-	if(isset($_POST['site_credits']))
-		update_user_meta( $user_id, 'pmpron_site_credits', intval($_POST['site_credits']) );	
+	return $panels;
 }
-add_action( 'profile_update', 'pmpron_profile_fields_update' );
-add_action( 'user_edit_form_tag', 'pmpron_profile_fields_update' );
+add_filter( 'pmpro_member_edit_panels', 'pmpron_member_edit_panels' );
 
 /*
 	When a site is deleted, free up the site credit and blog id
