@@ -10,6 +10,11 @@ Text Domain: pmpro-network
 Domain Path: /languages
 */
 
+// This plugin only operates on a multisite network. Bail on single-site installs.
+if ( ! is_multisite() ) {
+	return;
+}
+
 /**
  * Load the languages folder for translations.
  */
@@ -70,10 +75,6 @@ add_action('init', 'pmpron_init');
 //add the fields to the form 
 function pmpron_pmpro_checkout_boxes() {
 	global $current_user, $wpdb, $pmpro_network_non_site_levels, $current_site;
-	//Bail if it's not a multiste install
-	if(! isset( $current_site ) ) {
-		return;
-	}
 
 	$level_id = null;
 
@@ -328,11 +329,6 @@ add_action( 'pmpro_save_membership_level', 'pmpron_pmpro_save_membership_level' 
 
 //Display the setting for the number of site credits on the Edit Membership Level page
 function pmpron_pmpro_membership_level_after_other_settings() {
-	global $current_site;
-	//Bail if it's not a multisite install
-	if(! isset( $current_site ) ) {
-		return;
-	}
 	$level_id = intval($_REQUEST['edit']);
 	if($level_id > 0) {
 		//want to specifically get the value from options here
