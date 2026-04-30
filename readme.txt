@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, multisite, network, network sites, wpmu
 Requires at least: 5.2
-Tested up to: 6.4
-Stable tag: 0.5.4
+Tested up to: 6.9
+Stable tag: 0.6
 
 Create a network site for the member as part of membership to the main site.
 
@@ -57,6 +57,15 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.6 - 2026-04-30 =
+* ENHANCEMENT: Refreshed the Site Information section on the membership checkout page to use the v3.1 form classes and markup. #34 (@MaximilianoRicoTabo)
+* ENHANCEMENT: Added a "Site Credits" panel on the v3.1 Edit Member dashboard page showing the member's site credits and a list of their network sites with links to visit each site or its dashboard. #33 #37 (@MaximilianoRicoTabo, @dparker1005)
+* ENHANCEMENT: The "Site Credits" header on the Edit Membership Level page is now an `<h3>` to fit under the v3.1 heading hierarchy, and the plugin now bails at load on single-site installs. #32 (@MaximilianoRicoTabo)
+* ENHANCEMENT: Site creation and reactivation failures are now appended to the order notes for easier debugging. `$_REQUEST` values used at checkout are now sanitized with `sanitize_text_field()` and `wp_unslash()`. #36 (@dwanjuki)
+* ENHANCEMENT: Updated the link to the Memberlite theme in the readme. #35 (@kimwhite)
+* BUG FIX/ENHANCEMENT: Network site provisioning now works correctly for offsite and delayed checkout flows (PayPal Express, PayFast, Stripe Checkout, Pay By Check). The plugin reads site details from `$_REQUEST` after PMPro core repopulates it from order meta, and `pmpron_addSite()` now accepts an optional `$user_id` argument so sites can be created for the right user during webhook-driven and admin-initiated completions. #36 (@dwanjuki)
+* DEPRECATED: Removed the deprecated `pmpro_paypalexpress_session_vars` hook callback. PMPro core's `pmpro_save_checkout_data_to_order` / `pmpro_pull_checkout_data_from_order` mechanism handles offsite gateway data persistence now. #36 (@dwanjuki)
+
 = 0.5.4 - 2024-02-06 =
 * SECURITY: Improved security to the frontend shortcode to create and manage sites.
 

@@ -3,7 +3,7 @@
 Plugin Name: Paid Memberships Pro - Member Network Sites Add On
 Plugin URI: https://www.paidmembershipspro.com/add-ons/pmpro-network-multisite-membership/
 Description: Create a network site for the member as part of membership to the main site.
-Version: 0.5.4
+Version: 0.6
 Author: Paid Memberships Pro
 Author URI: https://www.paidmembershipspro.com
 Text Domain: pmpro-network
@@ -72,7 +72,7 @@ add_action('init', 'pmpron_init');
 /**
  * Add site credits fields to the checkout page.
  *
- * @since TBD
+ * @since 0.6
  */
 function pmpron_pmpro_checkout_boxes() {
 	global $current_user, $pmpro_network_non_site_levels, $current_site;
@@ -169,7 +169,7 @@ add_action( 'pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes' );
  * Update the user after checkout
  *
  * @since unknown
- * @since TBD Site details are pulled from $_REQUEST (which PMPro core repopulates from order meta on offsite/delayed checkout returns).
+ * @since 0.6 Site details are pulled from $_REQUEST (which PMPro core repopulates from order meta on offsite/delayed checkout returns).
  *
  * @param int         $user_id The ID of the user who completed checkout.
  * @param MemberOrder $order The order object.
@@ -335,7 +335,7 @@ add_action( 'pmpro_membership_level_after_other_settings', 'pmpron_pmpro_members
  * Function to add a site.
  *
  * @since unknown
- * @since TBD Added $user_id arg.
+ * @since 0.6 Added $user_id arg.
  *
  * @param string $sitename  The name of the site to add.
  * @param string $sitetitle The title of the site to add.
@@ -733,7 +733,7 @@ add_action( 'myblogs_allblogs_options', 'pmpron_myblogs_allblogs_options' );
 /**
  * Add the Site Credits panel to the Edit Member dashboard page.
  *
- * @since TBD
+ * @since 0.6
  *
  * @param array $panels Array of panels.
  * @return array Array of panels.

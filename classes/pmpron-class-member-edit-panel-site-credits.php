@@ -15,7 +15,7 @@ class PMPron_Member_Edit_Panel_Site_Credits extends PMPro_Member_Edit_Panel {
 	/**
 	 * Display the panel contents.
 	 *
-	 * @since TBD
+	 * @since 0.6
 	 */
 	protected function display_panel_contents() {
 		// Bail if user can't manage the network.
@@ -86,7 +86,7 @@ class PMPron_Member_Edit_Panel_Site_Credits extends PMPro_Member_Edit_Panel {
 	/**
 	 * Save the panel.
 	 *
-	 * @since TBD
+	 * @since 0.6
 	 */
 	public function save() {
 		// Bail if user can't manage the network.
