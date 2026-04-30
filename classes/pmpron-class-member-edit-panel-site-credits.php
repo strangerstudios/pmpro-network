@@ -43,7 +43,44 @@ class PMPron_Member_Edit_Panel_Site_Credits extends PMPro_Member_Edit_Panel {
 		<p class="submit">
 			<button class="button button-primary" type="submit"><?php esc_html_e( 'Update', 'pmpro-network' ); ?></button>
 		</p>
-		<?php
+		<?php if ( $num > 0 ) { ?>
+			<h3><?php esc_html_e( 'Sites', 'pmpro-network' ); ?></h3>
+			<table class="wp-list-table widefat fixed striped">
+				<thead>
+					<tr>
+						<th><?php esc_html_e( 'Site', 'pmpro-network' ); ?></th>
+						<th><?php esc_html_e( 'Address', 'pmpro-network' ); ?></th>
+						<th><?php esc_html_e( 'Registered', 'pmpro-network' ); ?></th>
+						<th><?php esc_html_e( 'Actions', 'pmpro-network' ); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php
+					$date_format = get_option( 'date_format' );
+					foreach ( $all_blog_ids as $blog_id ) {
+						$blog_details = get_blog_details( $blog_id );
+						if ( empty( $blog_details ) ) {
+							continue;
+						}
+						$blog_address = get_blogaddress_by_id( $blog_id );
+						$blog_name    = get_blog_option( $blog_id, 'blogname' );
+						?>
+						<tr>
+							<td><?php echo esc_html( $blog_name ); ?></td>
+							<td><a href="<?php echo esc_url( $blog_address ); ?>"><?php echo esc_html( $blog_address ); ?></a></td>
+							<td><?php echo esc_html( mysql2date( $date_format, $blog_details->registered ) ); ?></td>
+							<td>
+								<a href="<?php echo esc_url( $blog_address ); ?>"><?php esc_html_e( 'Visit', 'pmpro-network' ); ?></a>
+								|
+								<a href="<?php echo esc_url( get_admin_url( $blog_id ) ); ?>"><?php esc_html_e( 'Dashboard', 'pmpro-network' ); ?></a>
+							</td>
+						</tr>
+						<?php
+					}
+					?>
+				</tbody>
+			</table>
+		<?php }
 	}
 
 	/**
