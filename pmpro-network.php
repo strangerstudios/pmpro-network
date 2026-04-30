@@ -65,125 +65,100 @@ function pmpron_init() {
 add_action('init', 'pmpron_init');
 
 /**
- * Add site credits fields  to the checkout page.
+ * Add site credits fields to the checkout page.
  *
  * @since TBD
- * @return void
  */
 function pmpron_pmpro_checkout_boxes() {
-	global $current_user, $wpdb, $pmpro_network_non_site_levels;
+	global $current_user, $pmpro_network_non_site_levels, $current_site;
 
 	$level_id = null;
 
-	// Get the level info
+	// Get the level info.
 	$level = pmpro_getLevelAtCheckout();
 	if ( ! empty( $level->id ) ) {
 		$level_id = intval( $level->id );
 	}
 
-	// Bail if requested level is in non site levels array
-	if ( !empty( $level_id ) && !empty( $pmpro_network_non_site_levels )
-		&& in_array( $level_id, $pmpro_network_non_site_levels ) ) {
+	// Bail if requested level is in non site levels array.
+	if ( ! empty( $level_id ) && ! empty( $pmpro_network_non_site_levels ) && in_array( $level_id, $pmpro_network_non_site_levels ) ) {
 		return;
 	}
 
-	// Bail if site credits for this level is < 1
-	if( intval( pmpron_getSiteCredits( $level_id ) ) < 1 ) {
+	// Bail if site credits for this level is < 1.
+	$site_credits = pmpron_getSiteCredits( $level_id );
+	if ( intval( $site_credits ) < 1 ) {
 		return;
 	}
-	
-	$sitename = '';
-	$sitetitle = '';
-	if( !empty( $_REQUEST['sitename'] ) ) {
-		$sitename = $_REQUEST['sitename'];
-		$sitetitle = $_REQUEST['sitetitle']; 
-	}
 
+	// Pre-fill from a previous submission, if any.
+	$sitename  = ! empty( $_REQUEST['sitename'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) ) : '';
+	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
+
+	// Check if the user already has a blog.
+	$blogname = '';
+	$blog_id  = '';
+	if ( $current_user->ID ) {
+		$all_blog_ids = pmpron_getBlogsForUser( $current_user->ID );
+		$blog_id      = get_user_meta( $current_user->ID, 'pmpron_blog_id', true );
+		if ( count( $all_blog_ids ) > 1 ) {
+			$blogname = 'many';
+		} elseif ( $blog_id ) {
+			$blogname = get_blog_option( $blog_id, 'blogname' );
+		}
+	}
 	?>
-<fieldset id="pmpro_site_fields" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset', 'pmpro_payment_information_fields' ) ); ?>">
-	<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card' ) ); ?>">
-		<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
-			<legend class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_legend' ) ); ?>">
-				<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_heading pmpro_font-large' ) ); ?>">
-					<span class="pmpro_checkout-h2-name"><?php esc_html_e( 'Site Information', 'pmpro-network'); ?></span>
-				</h2>
-			</legend>
-			<span>
-				<?php echo sprintf( __( 'Sites Included: <strong>%s</strong>', 'pmpro-network' ), pmpron_getSiteCredits($level_id), 'pmpro-network'); ?></span>
-			</span>
-			<div class="pmpro_checkout-fields">
-				<?php
-					//check if the user already has a blog
-					if( $current_user->ID ) {
-						$all_blog_ids = pmpron_getBlogsForUser( $current_user->ID );
-						$blog_id = get_user_meta( $current_user->ID, "pmpron_blog_id", true );
-						if( count( $all_blog_ids ) > 1 ) {
-							$blogname = "many";
-						} elseif( $blog_id ) {
-							$user_blog = $wpdb->get_row( "SELECT * FROM $wpdb->blogs WHERE blog_id = '" . $blog_id . "' LIMIT 1" );
-							$blogname = get_blog_option( $blog_id, "blogname" );
+	<fieldset id="pmpro_site_fields" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fieldset', 'pmpro_site_fields' ) ); ?>">
+		<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card' ) ); ?>">
+			<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_card_content' ) ); ?>">
+				<legend class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_legend' ) ); ?>">
+					<h2 class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_heading pmpro_font-large' ) ); ?>"><?php esc_html_e( 'Site Information', 'pmpro-network' ); ?></h2>
+					<p class="pmpro_checkout-h2-msg"><?php echo wp_kses( sprintf( __( 'Sites Included: <strong>%s</strong>', 'pmpro-network' ), $site_credits ), array( 'strong' => array() ) ); ?></p>
+				</legend>
+				<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_fields' ) ); ?>">
+					<?php if ( ! empty( $blogname ) ) { ?>
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field' ) ); ?>">
+							<?php if ( $blogname === 'many' ) { ?>
+								<p><?php esc_html_e( 'You will be reclaiming your previous sites.', 'pmpro-network' ); ?></p>
+							<?php } else { ?>
+								<p><?php echo wp_kses( sprintf( __( 'You will be reclaiming your site <strong>%s</strong>.', 'pmpro-network' ), esc_html( $blogname ) ), array( 'strong' => array() ) ); ?></p>
+							<?php } ?>
+							<input type="hidden" name="blog_id" value="<?php echo esc_attr( $blog_id ); ?>" />
+						</div>
+					<?php } else {
+						$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
+						if ( ! is_subdomain_install() ) {
+							$site = $current_site->domain . $current_site->path . __( 'sitename' );
+						} else {
+							$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
 						}
-					}
-
-					if( !empty( $blogname ) ) {
-							?>
-							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_checkout-field' ) ); ?>">
-								<p>
-								<?php 	if( $blogname == "many" ) { ?>
-									<?php esc_html_e( 'You will be reclaiming your previous sites.', 'pmpro-network' ); ?>
-								<?php } else { ?>
-									<?php echo sprintf( __( 'You will be reclaiming your site <strong>%s</strong>.', 'pmpro-network' ), $blogname ); ?>
-								</p>
-								<input type="hidden" name="blog_id" value="<?php echo esc_attr( $blog_id ); ?>" />
-
+						?>
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-text pmpro_form_field-sitename', 'pmpro_form_field-sitename' ) ); ?>">
+							<label for="sitename" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>">
+								<?php esc_html_e( 'Site Name', 'pmpro-network' ); ?>
+								<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>"> <abbr title="<?php esc_attr_e( 'Required Field', 'pmpro-network' ); ?>">*</abbr></span>
+							</label>
+							<input id="sitename" name="sitename" type="text" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text', 'sitename' ) ); ?>" value="<?php echo esc_attr( $sitename ); ?>" />
+							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ); ?>">
+								<p><strong><?php echo esc_html( sprintf( __( 'Your address will be %s', 'pmpro-network' ), $site ) ); ?></strong></p>
+								<p><?php echo wp_kses( __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ), array( 'em' => array() ) ); ?></p>
 							</div>
-						<?php
-						}
-					} else {
-					?>
-					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-sitename' ) ); ?>">
-						<label for="sitename" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ) ?>">
-							<?php esc_html_e( 'Site Name', 'pmpro-network' ); ?>
-							<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>">
-								<abbr title="<?php esc_attr_e( 'Required Field', 'pmpro-network' ); ?>">*</abbr>
-						</label>
-						<input id="sitename" name="sitename" type="text" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text') ) ?>" size="30" value="<?php echo esc_attr( stripslashes( $sitename ) ); ?>" />
-						<?php
-							global $current_site;
-							$site_domain = preg_replace( '|^www\.|', '', $current_site->domain );
-
-							if ( !is_subdomain_install() ) {
-								$site = $current_site->domain . $current_site->path . __( 'sitename' );
-							} else {
-								$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
-							}
-							?>
-							<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_hint' ) ) ?>">
-								<p>
-									<?php echo esc_html( sprintf( __( 'Your address will be %s', 'pmpro-network' ), $site ) ); ?>
-								</p>
-								<p>
-									<?php echo __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) ?>
-								</p>
-							</div>
-					</div> <!-- end pmpro_checkout-field-sitename -->
-					<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_checkout-field pmpro_checkout-field-sitetitle' ) ); ?>">
-						<label for="sitetitle" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ) ?>" >
-							<?php esc_html_e( 'Site Title', 'pmpro-network' ); ?>
-							<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>">
-								<abbr title="<?php esc_attr_e( 'Required Field', 'pmpro-network' ); ?>">*</abbr>
-						</label>
-						<input id="sitetitle" name="sitetitle" type="text" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text') ) ?>" size="30" value="<?php echo esc_attr( stripslashes( $sitename ) ); ?>" size="30" value="<?php echo esc_attr(stripslashes($sitetitle)); ?>" />
-					</div> <!-- end pmpro_checkout-field-sitetitle -->
-					<?php
-					}
-					?>
-			</div> <!-- end pmpro_checkout-fields -->
-		</div> <!-- end pmpro_card_content -->
-	</div> <!-- end pmpro_card -->
-<?php
+						</div> <!-- end pmpro_form_field-sitename -->
+						<div class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_field pmpro_form_field-text pmpro_form_field-sitetitle', 'pmpro_form_field-sitetitle' ) ); ?>">
+							<label for="sitetitle" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_label' ) ); ?>">
+								<?php esc_html_e( 'Site Title', 'pmpro-network' ); ?>
+								<span class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_asterisk' ) ); ?>"> <abbr title="<?php esc_attr_e( 'Required Field', 'pmpro-network' ); ?>">*</abbr></span>
+							</label>
+							<input id="sitetitle" name="sitetitle" type="text" class="<?php echo esc_attr( pmpro_get_element_class( 'pmpro_form_input pmpro_form_input-text', 'sitetitle' ) ); ?>" value="<?php echo esc_attr( $sitetitle ); ?>" />
+						</div> <!-- end pmpro_form_field-sitetitle -->
+					<?php } ?>
+				</div> <!-- end pmpro_form_fields -->
+			</div> <!-- end pmpro_card_content -->
+		</div> <!-- end pmpro_card -->
+	</fieldset> <!-- end pmpro_site_fields -->
+	<?php
 }
-add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
+add_action( 'pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes' );
 
 //update the user after checkout
 function pmpron_update_site_after_checkout( $user_id, $order )
