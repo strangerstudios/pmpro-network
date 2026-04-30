@@ -178,13 +178,15 @@ function pmpron_pmpro_checkout_boxes()
 add_action('pmpro_checkout_boxes', 'pmpron_pmpro_checkout_boxes');
 
 /**
- * Save site details to order meta when an order is added for a network site level.
+ * Update the user after checkout
  *
- * @since TBD
+ * @since unknown
+ * @since TBD Site details are pulled from $_REQUEST (which PMPro core repopulates from order meta on offsite/delayed checkout returns).
  *
+ * @param int         $user_id The ID of the user who completed checkout.
  * @param MemberOrder $order The order object.
  */
-function pmpron_pmpro_added_order( $order ) {
+function pmpron_update_site_after_checkout( $user_id, $order ) {
 	global $pmpro_network_non_site_levels;
 
 	// If we don't have an order, bail.
@@ -192,57 +194,19 @@ function pmpron_pmpro_added_order( $order ) {
 		return;
 	}
 
-	// If the order level is not set or is in the non site levels array, bail.
-	if ( empty( $order->membership_id ) || ( ( is_array( $pmpro_network_non_site_levels ) && in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) ) ) {
+	// Membership level ID not set, or completed checkout is for a non-network site level, bail.
+	if ( empty( $order->membership_id ) || ( is_array( $pmpro_network_non_site_levels ) && in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) ) {
 		return;
 	}
 
-	// Get site name, site title, and blog id from request.
+	// Pull site details from $_REQUEST. For offsite/delayed checkout flows, PMPro core
+	// repopulates $_REQUEST from order meta via pmpro_pull_checkout_data_from_order()
+	// before pmpro_after_checkout fires.
 	$sitename  = ! empty( $_REQUEST['sitename'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) ) : '';
 	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
 	$blog_id   = ! empty( $_REQUEST['blog_id'] ) ? absint( $_REQUEST['blog_id'] ) : 0;
 
-	// Save site details to order meta for use later.
-	if ( ! empty( $sitename ) ) {
-		update_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', $sitename );
-	}
-	if ( ! empty( $sitetitle ) ) {
-		update_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', $sitetitle );
-	}
-	if ( ! empty( $blog_id ) ) {
-		update_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', $blog_id );
-	}
-}
-add_action( 'pmpro_added_order', 'pmpron_pmpro_added_order' );
-
-/**
- * Update the user after checkout
- *
- * @since unknown
- * @since TBD Fetching site details from order meta instead of request/session
- *
- * @param int         $user_id The ID of the user who completed checkout.
- * @param MemberOrder $order The order object.
- */
-function pmpron_update_site_after_checkout( $user_id, $order ) {
-	global $current_site, $pmpro_network_non_site_levels;
-
-	// If we don't have an order, bail.
-	if ( empty( $order ) || empty( $order->id ) ) {
-		return;
-	}
-
-	// Membership level ID not set, or completed checkout is for a non-network site level, bail.
-	if ( empty( $order->membership_id ) || ( ( is_array( $pmpro_network_non_site_levels ) && in_array( $order->membership_id, $pmpro_network_non_site_levels ) ) ) ) {
-		return;
-	}
-
-	// Pull site details from order.
-	$sitename  = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitename', true );
-	$sitetitle = get_pmpro_membership_order_meta( $order->id, 'pmpron_sitetitle', true );
-	$blog_id   = get_pmpro_membership_order_meta( $order->id, 'pmpron_blog_id', true );
-
-	// No network site details in the order, bail.
+	// No network site details in the request, bail.
 	if ( empty( $sitename ) && empty( $blog_id ) ) {
 		return;
 	}
