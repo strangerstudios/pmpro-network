@@ -1,4 +1,8 @@
 <?php  	
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /*
 	Preheader
 */
@@ -16,7 +20,7 @@ function pmpron_manage_sites_preheader() {
 
 			if(empty($credits)) {
 				//redirect to levels
-				wp_redirect(pmpro_url("levels"));
+				wp_redirect(pmpro_url("levels")); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- pmpro_url() is filterable and may point to another host (e.g. Network Subsite).
 				exit;
 			}
 		}
@@ -37,9 +41,11 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 	$sitetitle = '';
 
 	//adding a site, check the submission and nonce.
-	if ( ! empty( $_POST['addsite'] ) && ( ! empty( $_POST['pmpron_add_site_nonce'] ) && wp_verify_nonce( $_POST['pmpron_add_site_nonce'], 'pmpron_add_site' ) ) ) {
-		$sitename = sanitize_text_field( $_REQUEST['sitename'] );
-		$sitetitle = sanitize_text_field( $_REQUEST['sitetitle'] );
+	if ( ! empty( $_POST['addsite'] ) && ( ! empty( $_POST['pmpron_add_site_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['pmpron_add_site_nonce'] ) ), 'pmpron_add_site' ) ) ) {
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Left slashed on purpose: wpmu_create_blog() unslashes the title itself, the site name is validated to letters/numbers by wpmu_validate_blog_signup(), and the form re-display calls stripslashes().
+		$sitename = isset( $_REQUEST['sitename'] ) ? sanitize_text_field( $_REQUEST['sitename'] ) : '';
+		$sitetitle = isset( $_REQUEST['sitetitle'] ) ? sanitize_text_field( $_REQUEST['sitetitle'] ) : '';
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
 		if ( pmpron_checkSiteName( $sitename, $sitetitle ) ) {
 			$blog_id = pmpron_addSite( $sitename, $sitetitle );
@@ -64,7 +70,7 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 	// Show the error message if there is an error.
 	if ( ! empty( $pmpro_msg ) ) { 
 	?>
-		<div class="pmpro_message <?php echo $pmpro_msgt;?>"><?php echo $pmpro_msg;?></div>
+		<div class="pmpro_message <?php echo esc_attr( $pmpro_msgt );?>"><?php echo wp_kses_post( $pmpro_msg );?></div>
 	<?php } ?>
 	<div class="pmpro_message <?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>pmpro_error<?php } ?>">
 		<?php if( count($blog_ids) >= intval($current_user->pmpron_site_credits) ) { ?>
@@ -100,7 +106,7 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 								else
 									$site = __( '{site name}' ) . '.' . $site_domain . $current_site->path;
 
-								echo '<p><small class="lite"><strong>' . esc_html( sprintf( __('Your address will be %s', 'pmpro-network' ), $site ) ) . '</strong>.<br />' . __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) . '</small></p>';
+								echo '<p><small class="lite"><strong>' . esc_html( sprintf( __('Your address will be %s', 'pmpro-network' ), $site ) ) . '</strong>.<br />' . wp_kses_post( __( 'Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed.', 'pmpro-network' ) ) . '</small></p>';
 
 							?>
 						</div>
@@ -145,8 +151,8 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 							<strong><?php echo esc_html( get_blog_option($blog_id, 'blogname' ) ); ?></strong> <?php esc_html_e('(deactivated)', 'pmpro-network'); ?>
 
 						<?php } else { ?>
-							<strong><a href="<?php echo get_site_url( $blog_id );?>"><?php echo get_blog_option( $blog_id, 'blogname' ); ?></a></strong><br />
-							<?php echo get_site_url( $blog_id ); ?>
+							<strong><a href="<?php echo esc_url( get_site_url( $blog_id ) );?>"><?php echo esc_html( get_blog_option( $blog_id, 'blogname' ) ); ?></a></strong><br />
+							<?php echo esc_html( get_site_url( $blog_id ) ); ?>
 							<div class="pmpro_actionlinks">
 								<a href="<?php echo esc_url( get_site_url( $blog_id ) ); ?>"><?php esc_html_e('Visit', 'pmpro-network'); ?></a>&nbsp;|&nbsp;<a href="<?php echo esc_url( get_site_url( $blog_id, '/wp-admin/' ) ); ?>"><?php esc_html_e('Dashboard', 'pmpro-network'); ?></a>
 

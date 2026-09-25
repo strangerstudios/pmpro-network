@@ -10,6 +10,10 @@ Text Domain: pmpro-network
 Domain Path: /languages
 */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // This plugin only operates on a multisite network. Bail on single-site installs.
 if ( ! is_multisite() ) {
 	return;
@@ -97,8 +101,10 @@ function pmpron_pmpro_checkout_boxes() {
 	}
 
 	// Pre-fill from a previous submission, if any.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only prefill of the checkout form fields.
 	$sitename  = ! empty( $_REQUEST['sitename'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) ) : '';
 	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	// Check if the user already has a blog.
 	$blogname = '';
@@ -190,9 +196,11 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 	// Pull site details from $_REQUEST. For offsite/delayed checkout flows, PMPro core
 	// repopulates $_REQUEST from order meta via pmpro_pull_checkout_data_from_order()
 	// before pmpro_after_checkout fires.
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Checkout nonce (pmpro_checkout_nonce) is verified by PMPro core in preheaders/checkout.php.
 	$sitename  = ! empty( $_REQUEST['sitename'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) ) : '';
 	$sitetitle = ! empty( $_REQUEST['sitetitle'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) ) : '';
 	$blog_id   = ! empty( $_REQUEST['blog_id'] ) ? absint( $_REQUEST['blog_id'] ) : 0;
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	// No network site details in the request, bail.
 	if ( empty( $sitename ) && empty( $blog_id ) ) {
@@ -291,8 +299,10 @@ add_filter( 'pmpro_member_links_top', 'pmpron_pmpro_member_links_top' );
 	Save the "Site Credits" field on the Edit Membership Level page
 */
 function pmpron_pmpro_save_membership_level( $level_id ) {
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce and capability are verified by PMPro core before pmpro_save_membership_level fires (adminpages/membershiplevels.php).
 	if(isset($_REQUEST['pmpro_site_credits'])) {
 		$pmpro_site_credits = intval($_REQUEST['pmpro_site_credits']);
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 	} else {
 		$pmpro_site_credits = 0;
 	}
@@ -302,7 +312,7 @@ add_action( 'pmpro_save_membership_level', 'pmpron_pmpro_save_membership_level' 
 
 //Display the setting for the number of site credits on the Edit Membership Level page
 function pmpron_pmpro_membership_level_after_other_settings() {
-	$level_id = intval($_REQUEST['edit']);
+	$level_id = isset( $_REQUEST['edit'] ) ? intval( $_REQUEST['edit'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display on the Edit Membership Level screen.
 	if($level_id > 0) {
 		//want to specifically get the value from options here
 		$pmpro_site_credits = get_option('pmpron_site_credits_' . $level_id, null);
@@ -410,20 +420,22 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 	if ( !$pmpro_continue_registration )
 		return $pmpro_continue_registration;	
 	
+	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Checkout nonce (pmpro_checkout_nonce) is verified by PMPro core in preheaders/checkout.php before pmpro_registration_checks runs.
 	if(!empty($_REQUEST['sitename']))
-		$sitename = $_REQUEST['sitename'];
+		$sitename = sanitize_text_field( wp_unslash( $_REQUEST['sitename'] ) );
 	else
 		$sitename = '';
 		
 	if(!empty($_REQUEST['sitetitle']))
-		$sitetitle = $_REQUEST['sitetitle'];
+		$sitetitle = sanitize_text_field( wp_unslash( $_REQUEST['sitetitle'] ) );
 	else
 		$sitetitle = '';
 		
 	if(!empty($_REQUEST['blog_id']))
-		$blog_id = $_REQUEST['blog_id'];
+		$blog_id = absint( $_REQUEST['blog_id'] );
 	else
 		$blog_id = '';
+	// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 	$site_credits = pmpron_getSiteCredits($pmpro_level->id);
 	
@@ -513,12 +525,11 @@ function pmpron_new_blogs_settings($blog_id)
 	update_blog_option($blog_id, 'blogdescription', 'Change your subtitle');			
 				
 	//change the category 1 to "general" (pet peeve of mine)
-	$sqlQuery = "UPDATE " . $wpdb->prefix . $blog_id . "_terms SET name = 'General', slug = 'general' WHERE term_id = 1 LIMIT 1";			
-	$wpdb->query($sqlQuery);
+	$sqlQuery = "UPDATE " . $wpdb->prefix . intval( $blog_id ) . "_terms SET name = 'General', slug = 'general' WHERE term_id = 1 LIMIT 1";			
+	$wpdb->query($sqlQuery); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Static query; the only variable is the table name built from the integer blog ID.
 	
 	//make the blog public
-	$sqlQuery = "UPDATE $wpdb->blogs SET public = 1 WHERE blog_id = '" . $blog_id . "' LIMIT 1";		
-	$wpdb->query($sqlQuery);
+	$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->blogs SET public = 1 WHERE blog_id = %d LIMIT 1", $blog_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time update on site creation.
 	
 	//add some other categories		
 	/*

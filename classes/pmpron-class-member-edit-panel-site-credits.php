@@ -98,7 +98,7 @@ class PMPron_Member_Edit_Panel_Site_Credits extends PMPro_Member_Edit_Panel {
 		$user = self::get_user();
 
 		// Get the site credits.
-		$site_credits = isset( $_POST['site_credits'] ) ? intval( $_POST['site_credits'] ) : 0;
+		$site_credits = isset( $_POST['site_credits'] ) ? intval( $_POST['site_credits'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by PMPro core before panel save() (adminpages/member-edit.php).
 
 		// Update the user's site credits.
 		update_user_meta( $user->ID, 'pmpron_site_credits', $site_credits );
