@@ -299,10 +299,8 @@ add_filter( 'pmpro_member_links_top', 'pmpron_pmpro_member_links_top' );
 	Save the "Site Credits" field on the Edit Membership Level page
 */
 function pmpron_pmpro_save_membership_level( $level_id ) {
-	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce and capability are verified by PMPro core before pmpro_save_membership_level fires (adminpages/membershiplevels.php).
-	if(isset($_REQUEST['pmpro_site_credits'])) {
-		$pmpro_site_credits = intval($_REQUEST['pmpro_site_credits']);
-	// phpcs:enable WordPress.Security.NonceVerification.Recommended
+	if(isset($_REQUEST['pmpro_site_credits'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce and capability are verified by PMPro core before pmpro_save_membership_level fires (adminpages/membershiplevels.php).
+		$pmpro_site_credits = intval($_REQUEST['pmpro_site_credits']); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- See above.
 	} else {
 		$pmpro_site_credits = 0;
 	}
@@ -525,8 +523,8 @@ function pmpron_new_blogs_settings($blog_id)
 	update_blog_option($blog_id, 'blogdescription', 'Change your subtitle');			
 				
 	//change the category 1 to "general" (pet peeve of mine)
-	$sqlQuery = "UPDATE " . $wpdb->prefix . intval( $blog_id ) . "_terms SET name = 'General', slug = 'general' WHERE term_id = 1 LIMIT 1";			
-	$wpdb->query($sqlQuery); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Static query; the only variable is the table name built from the integer blog ID.
+	$sqlQuery = "UPDATE " . $wpdb->get_blog_prefix( $blog_id ) . "terms SET name = 'General', slug = 'general' WHERE term_id = 1 LIMIT 1";			
+	$wpdb->query($sqlQuery); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Static query; the only variable is the new site's table prefix.
 	
 	//make the blog public
 	$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->blogs SET public = 1 WHERE blog_id = %d LIMIT 1", $blog_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time update on site creation.
