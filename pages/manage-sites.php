@@ -41,7 +41,11 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 		$sitename = sanitize_text_field( $_REQUEST['sitename'] );
 		$sitetitle = sanitize_text_field( $_REQUEST['sitetitle'] );
 
-		if ( pmpron_checkSiteName( $sitename, $sitetitle ) ) {
+		if ( count( pmpron_getBlogsForUser( $current_user->ID ) ) >= intval( $current_user->pmpron_site_credits ) ) {
+			// No site credits remaining.
+			$pmpro_msg = __( 'You have no site credits remaining.', 'pmpro-network' );
+			$pmpro_msgt = "pmpro_error";
+		} elseif ( pmpron_checkSiteName( $sitename, $sitetitle ) ) {
 			$blog_id = pmpron_addSite( $sitename, $sitetitle );
 			if ( is_wp_error( $blog_id ) || empty( $blog_id ) ) {
 				$pmpro_msg = __( 'Error creating site.', 'pmpro-network' );
