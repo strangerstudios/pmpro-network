@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Member Network Sites Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Member Network Sites Add On 0.6\n"
+"Project-Id-Version: Paid Memberships Pro - Member Network Sites Add On 0.6.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-30T18:10:22+00:00\n"
+"POT-Creation-Date: 2026-09-28T19:08:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-network\n"
@@ -41,7 +41,7 @@ msgstr ""
 
 #: classes/pmpron-class-member-edit-panel-site-credits.php:12
 #: classes/pmpron-class-member-edit-panel-site-credits.php:36
-#: pmpro-network.php:317
+#: pmpro-network.php:325
 msgid "Site Credits"
 msgstr ""
 
@@ -75,14 +75,14 @@ msgid "Actions"
 msgstr ""
 
 #: classes/pmpron-class-member-edit-panel-site-credits.php:73
-#: pages/manage-sites.php:151
-#: pmpro-network.php:554
+#: pages/manage-sites.php:177
+#: pmpro-network.php:563
 msgid "Visit"
 msgstr ""
 
 #: classes/pmpron-class-member-edit-panel-site-credits.php:75
-#: pages/manage-sites.php:151
-#: pmpro-network.php:554
+#: pages/manage-sites.php:177
+#: pmpro-network.php:563
 msgid "Dashboard"
 msgstr ""
 
@@ -90,136 +90,144 @@ msgstr ""
 msgid "Site credits updated."
 msgstr ""
 
-#: pages/manage-sites.php:47
+#: pages/manage-sites.php:60
+msgid "Another site is already being created. Please try again in a moment."
+msgstr ""
+
+#: pages/manage-sites.php:64
+msgid "You have no site credits remaining."
+msgstr ""
+
+#: pages/manage-sites.php:69
 msgid "Error creating site."
 msgstr ""
 
-#: pages/manage-sites.php:50
+#: pages/manage-sites.php:72
 msgid "Your site has been created."
 msgstr ""
 
-#: pages/manage-sites.php:57
+#: pages/manage-sites.php:83
 msgid "Error creating site. Please try again"
 msgstr ""
 
-#: pages/manage-sites.php:71
-#: pages/manage-sites.php:78
+#: pages/manage-sites.php:97
+#: pages/manage-sites.php:104
 #, php-format
 msgid "You have used %s of %s site credits."
 msgstr ""
 
-#: pages/manage-sites.php:74
+#: pages/manage-sites.php:100
 #, php-format
 msgid "%s of your sites have been deactivated."
 msgstr ""
 
-#: pages/manage-sites.php:88
+#: pages/manage-sites.php:114
 msgid "Add a Site"
 msgstr ""
 
-#: pages/manage-sites.php:92
-#: pmpro-network.php:143
+#: pages/manage-sites.php:118
+#: pmpro-network.php:149
 msgid "Site Name"
 msgstr ""
 
-#: pages/manage-sites.php:103
-#: pmpro-network.php:148
+#: pages/manage-sites.php:129
+#: pmpro-network.php:154
 #, php-format
 msgid "Your address will be %s"
 msgstr ""
 
-#: pages/manage-sites.php:103
-#: pmpro-network.php:149
+#: pages/manage-sites.php:129
+#: pmpro-network.php:155
 msgid "Your <em>Site Name</em> must be at least 4 characters (letters/numbers only). Once your site is created the site name cannot be changed."
 msgstr ""
 
-#: pages/manage-sites.php:108
-#: pmpro-network.php:154
+#: pages/manage-sites.php:134
+#: pmpro-network.php:160
 msgid "Site Title"
 msgstr ""
 
-#: pages/manage-sites.php:114
+#: pages/manage-sites.php:140
 msgid "Add Site"
 msgstr ""
 
-#: pages/manage-sites.php:126
+#: pages/manage-sites.php:152
 msgid "Your Sites"
 msgstr ""
 
-#: pages/manage-sites.php:145
+#: pages/manage-sites.php:171
 msgid "(deactivated)"
 msgstr ""
 
-#: pmpro-network.php:120
+#: pmpro-network.php:126
 msgid "Site Information"
 msgstr ""
 
-#: pmpro-network.php:121
+#: pmpro-network.php:127
 #, php-format
 msgid "Sites Included: <strong>%s</strong>"
 msgstr ""
 
-#: pmpro-network.php:127
+#: pmpro-network.php:133
 msgid "You will be reclaiming your previous sites."
 msgstr ""
 
-#: pmpro-network.php:129
+#: pmpro-network.php:135
 #, php-format
 msgid "You will be reclaiming your site <strong>%s</strong>."
 msgstr ""
 
-#: pmpro-network.php:144
-#: pmpro-network.php:155
+#: pmpro-network.php:150
+#: pmpro-network.php:161
 msgid "Required Field"
 msgstr ""
 
 #. translators: %d: Numeric Blog ID.
-#: pmpro-network.php:212
+#: pmpro-network.php:220
 #, php-format
 msgid "Site reactivation failed. Blog ID: %d."
 msgstr ""
 
-#: pmpro-network.php:218
+#: pmpro-network.php:226
 #, php-format
 msgid "Site creation error: %s"
 msgstr ""
 
-#: pmpro-network.php:221
+#: pmpro-network.php:229
 msgid "Site creation failed: User not found."
 msgstr ""
 
-#: pmpro-network.php:321
+#: pmpro-network.php:329
 msgid "Number of Sites"
 msgstr ""
 
-#: pmpro-network.php:325
+#: pmpro-network.php:333
 msgid "Set the number of sites members of this level will be allowed to create as part of membership. Numerical values only (no letters or special characters)."
 msgstr ""
 
-#: pmpro-network.php:383
+#: pmpro-network.php:391
 msgid "<strong>ERROR</strong>: Site creation failed."
 msgstr ""
 
-#: pmpro-network.php:553
+#: pmpro-network.php:562
 msgid "Your Primary Site"
 msgstr ""
 
-#: pmpro-network.php:722
+#: pmpro-network.php:731
 msgid "Below is a list of all sites you are an owner or member of."
 msgstr ""
 
-#: pmpro-network.php:773
+#: pmpro-network.php:782
 msgid "View Documentation"
 msgstr ""
 
-#: pmpro-network.php:773
+#: pmpro-network.php:782
 msgid "Docs"
 msgstr ""
 
-#: pmpro-network.php:774
+#: pmpro-network.php:783
 msgid "Visit Customer Support Forum"
 msgstr ""
 
-#: pmpro-network.php:774
+#: pmpro-network.php:783
 msgid "Support"
 msgstr ""
