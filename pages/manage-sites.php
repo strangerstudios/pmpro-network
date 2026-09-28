@@ -30,7 +30,7 @@ add_action("wp", "pmpron_manage_sites_preheader", 1);
 function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 	ob_start();
 
-	global $current_user, $pmpro_msg, $pmpro_msgt;
+	global $current_user, $pmpro_msg, $pmpro_msgt, $wpdb;
 
 	// default values for site names.
 	$sitename = '';
@@ -41,7 +41,23 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 		$sitename = sanitize_text_field( $_REQUEST['sitename'] );
 		$sitetitle = sanitize_text_field( $_REQUEST['sitetitle'] );
 
-		if ( pmpron_checkSiteName( $sitename, $sitetitle ) ) {
+		// Only let one request per member create a site at a time so simultaneous submissions can't share a site credit.
+		// INSERT IGNORE is atomic, so only one request can add the lock row. Locks older than 5 minutes are cleared first.
+		$lock_name = 'pmpron_add_site_lock_' . $current_user->ID;
+		$wpdb->query( $wpdb->prepare( "DELETE FROM $wpdb->options WHERE option_name = %s AND option_value < %d", $lock_name, time() - 5 * MINUTE_IN_SECONDS ) );
+		$has_lock = $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO $wpdb->options ( option_name, option_value, autoload ) VALUES ( %s, %s, 'no' )", $lock_name, time() ) );
+
+		// Re-read the member's user meta so the credit check sees sites added by a request that just finished.
+		wp_cache_delete( $current_user->ID, 'user_meta' );
+
+		if ( ! $has_lock ) {
+			$pmpro_msg = __( 'Another site is already being created. Please try again in a moment.', 'pmpro-network' );
+			$pmpro_msgt = "pmpro_error";
+		} elseif ( count( pmpron_getBlogsForUser( $current_user->ID ) ) >= intval( $current_user->pmpron_site_credits ) ) {
+			// No site credits remaining.
+			$pmpro_msg = __( 'You have no site credits remaining.', 'pmpro-network' );
+			$pmpro_msgt = "pmpro_error";
+		} elseif ( pmpron_checkSiteName( $sitename, $sitetitle ) ) {
 			$blog_id = pmpron_addSite( $sitename, $sitetitle );
 			if ( is_wp_error( $blog_id ) || empty( $blog_id ) ) {
 				$pmpro_msg = __( 'Error creating site.', 'pmpro-network' );
@@ -50,6 +66,10 @@ function pmpron_manage_sites_shortcode($atts, $content=null, $code="") {
 				$pmpro_msg = __( 'Your site has been created.', 'pmpro-network' );
 				$pmpro_msgt = "pmpro_success";
 			}
+		}
+
+		if ( $has_lock ) {
+			$wpdb->delete( $wpdb->options, array( 'option_name' => $lock_name ) );
 		}
 
 	} elseif ( ! empty ( $_POST['addsite'] ) ) { // Nonce is missing entirely during page submit or failed. Throw an error.
