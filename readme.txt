@@ -2,8 +2,8 @@
 Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, multisite, network, network sites, wpmu
 Requires at least: 5.2
-Tested up to: 6.9
-Stable tag: 0.6
+Tested up to: 7.1
+Stable tag: 0.6.1
 
 Create a network site for the member as part of membership to the main site.
 
@@ -57,6 +57,13 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.6.1 - 2026-09-28 =
+* SECURITY: The Manage Sites page now checks that a member has site credits remaining before creating a new site. #39 (@dparker1005)
+* SECURITY: Escaped the Manage Sites status message and site list output. #38 (@dparker1005)
+* SECURITY: Sanitized the site name, title and blog ID read during checkout validation. #38 (@dparker1005)
+* ENHANCEMENT: Hardened a database query on new site creation and added direct file access protection. #38 (@dparker1005)
+* BUG FIX: Fixed the default category not being renamed to "General" when a new site is created while on a subsite. #38 (@dparker1005)
+
 = 0.6 - 2026-04-30 =
 * ENHANCEMENT: Refreshed the Site Information section on the membership checkout page to use the v3.1 form classes and markup. #34 (@MaximilianoRicoTabo)
 * ENHANCEMENT: Added a "Site Credits" panel on the v3.1 Edit Member dashboard page showing the member's site credits and a list of their network sites with links to visit each site or its dashboard. #33 #37 (@MaximilianoRicoTabo, @dparker1005)
