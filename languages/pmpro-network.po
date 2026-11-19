@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Member Network Sites Add On plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Member Network Sites Add On 0.6.1\n"
+"Project-Id-Version: Paid Memberships Pro - Member Network Sites Add On 0.6.2\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-09-28T19:08:29+00:00\n"
+"POT-Creation-Date: 2026-11-19T15:58:38+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-network\n"
@@ -140,6 +140,7 @@ msgstr ""
 #: classes/pmpron-class-member-edit-panel-site-credits.php:73
 #: pmpro-network.php:554
 #: pages/manage-sites.php:177
+#: pmpro-network.php:566
 msgid "Visit"
 msgstr ""
 
@@ -150,6 +151,7 @@ msgstr ""
 #: classes/pmpron-class-member-edit-panel-site-credits.php:75
 #: pmpro-network.php:554
 #: pages/manage-sites.php:177
+#: pmpro-network.php:566
 msgid "Dashboard"
 msgstr ""
 
@@ -222,6 +224,7 @@ msgstr ""
 #: pmpro-network.php:562
 #: pmpro-network.php:568
 #: pmpro-network.php:553
+#: pmpro-network.php:565
 msgid "Your Primary Site"
 msgstr ""
 
@@ -229,6 +232,7 @@ msgstr ""
 #: pmpro-network.php:737
 #: pmpro-network.php:722
 #: pmpro-network.php:731
+#: pmpro-network.php:734
 msgid "Below is a list of all sites you are an owner or member of."
 msgstr ""
 
@@ -243,6 +247,7 @@ msgstr ""
 #: pmpro-network.php:812
 #: pmpro-network.php:773
 #: pmpro-network.php:782
+#: pmpro-network.php:785
 msgid "View Documentation"
 msgstr ""
 
@@ -250,6 +255,7 @@ msgstr ""
 #: pmpro-network.php:812
 #: pmpro-network.php:773
 #: pmpro-network.php:782
+#: pmpro-network.php:785
 msgid "Docs"
 msgstr ""
 
@@ -257,6 +263,7 @@ msgstr ""
 #: pmpro-network.php:813
 #: pmpro-network.php:774
 #: pmpro-network.php:783
+#: pmpro-network.php:786
 msgid "Visit Customer Support Forum"
 msgstr ""
 
@@ -264,6 +271,7 @@ msgstr ""
 #: pmpro-network.php:813
 #: pmpro-network.php:774
 #: pmpro-network.php:783
+#: pmpro-network.php:786
 msgid "Support"
 msgstr ""
 
