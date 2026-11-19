@@ -511,6 +511,9 @@ function pmpron_checkSiteName( $sitename, $sitetitle, $user = null )
 function pmpron_new_blogs_settings($blog_id) 
 {
     global $wpdb;
+
+	// The wp_initialize_site hook passes a WP_Site object. Still accept an ID for custom code calling this directly.
+	$blog_id = $blog_id instanceof WP_Site ? (int) $blog_id->id : (int) $blog_id;
 	
 	//change the default theme
 	/*
@@ -538,7 +541,7 @@ function pmpron_new_blogs_settings($blog_id)
 	*/		
 }
 //actions
-add_action( 'wpmu_new_blog', 'pmpron_new_blogs_settings' );
+add_action( 'wp_initialize_site', 'pmpron_new_blogs_settings', 20 ); // After core's wp_initialize_site() at priority 10 creates the site's tables.
 
 /*
 	Update the confirmation message to show links to the new site.
