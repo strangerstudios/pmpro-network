@@ -3,7 +3,7 @@ Contributors: strangerstudios
 Tags: paid memberships pro, pmpro, multisite, network, network sites, wpmu
 Requires at least: 5.2
 Tested up to: 7.1
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 
 Create a network site for the member as part of membership to the main site.
 
@@ -57,6 +57,9 @@ Please post it in the GitHub issue tracker here: https://github.com/strangerstud
 Please visit our premium support site at https://www.paidmembershipspro.com for more documentation and our support forums.
 
 == Changelog ==
+= 0.6.2 - 2026-11-19 =
+* BUG FIX: Fixed a "wpmu_new_blog is deprecated" notice when creating a new site. New-site settings now run on the `wp_initialize_site` hook. If you disabled them with `remove_action( 'wpmu_new_blog', 'pmpron_new_blogs_settings' )`, change that to `remove_action( 'wp_initialize_site', 'pmpron_new_blogs_settings', 20 );`. (#40) (@dparker1005)
+
 = 0.6.1 - 2026-09-28 =
 * SECURITY: The Manage Sites page now checks that a member has site credits remaining before creating a new site. #39 (@dparker1005)
 * SECURITY: Escaped the Manage Sites status message and site list output. #38 (@dparker1005)
