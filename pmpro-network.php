@@ -30,11 +30,16 @@ add_action( 'plugins_loaded', 'pmpron_load_textdomain' );
 /**
  * Get the number of site credits for a given level.
  */
-function pmpron_getSiteCredits($level_id) {
+function pmpron_getSiteCredits( $level_id, $user_id = null ) {
 	global $current_user;
+
+	// Default to the current user when no user ID is passed.
+	if ( empty( $user_id ) ) {
+		$user_id = $current_user->ID;
+	}
 	
 	$option = get_option('pmpron_site_credits_' . $level_id, null);
-	$site_credits = apply_filters( 'pmpron_site_credits', $option, $current_user->ID, $level_id);
+	$site_credits = apply_filters( 'pmpron_site_credits', $option, $user_id, $level_id);
 	
 	/*
 		Backwards compatibility. If there are site credits for a level, but the option isn't saved,
@@ -220,7 +225,7 @@ function pmpron_update_site_after_checkout( $user_id, $order ) {
 			$order->notes .= sprintf( __( 'Site reactivation failed. Blog ID: %d.', 'pmpro-network' ), $blog_id ) . "\n";
 			$order->saveOrder();
 		}
-	} elseif ( pmpron_getSiteCredits( $order->membership_id ) > 0 ) {
+	} elseif ( pmpron_getSiteCredits( $order->membership_id, $user_id ) > 0 ) {
 		$blog_id = pmpron_addSite( $sitename, $sitetitle, $user_id );
 		if ( is_wp_error( $blog_id ) ) {
 			$order->notes .= sprintf( __( 'Site creation error: %s', 'pmpro-network' ), $blog_id->get_error_message() ) . "\n";
@@ -583,7 +588,7 @@ function pmpron_after_all_membership_level_changes( $old_user_levels ) {
 		$site_credits = 0;
 		$new_levels = pmpro_getMembershipLevelsForUser( $user_id );
 		foreach ( $new_levels as $level ) {
-			$site_credits = max( $site_credits, pmpron_getSiteCredits($level->id) );
+			$site_credits = max( $site_credits, pmpron_getSiteCredits( $level->id, $user_id ) );
 		}
 
 		update_user_meta( $user_id, 'pmpron_site_credits', $site_credits );
@@ -624,7 +629,7 @@ function pmpron_pmpro_after_change_membership_level($level_id, $user_id)
 	if(!pmpro_hasMembershipLevel(NULL, $user_id)) {
 		$site_credits = 0;
 	} else {
-		$site_credits = pmpron_getSiteCredits($level_id);
+		$site_credits = pmpron_getSiteCredits( $level_id, $user_id );
 	}
 	update_user_meta($user_id, 'pmpron_site_credits', $site_credits);
 	
