@@ -725,7 +725,7 @@ function pmpron_myblogs_allblogs_options()
 
 	//In case they have sites but no site credit yet. Assume they have $num site credits.
 	//This will give 1 site credit to users on sites upgrading pmpro-network from .1/.2 to .3. 
-	if(empty($site_credits) && !empty($num)) {
+	if ( ! metadata_exists( 'user', $current_user->ID, 'pmpron_site_credits' ) && ! empty( $num ) ) {
 		$site_credits = $num;
 		update_user_meta($current_user->ID, "pmpron_site_credits", $site_credits);
 	}	
