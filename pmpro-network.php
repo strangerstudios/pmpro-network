@@ -530,7 +530,8 @@ function pmpron_new_blogs_settings($blog_id)
 	$wpdb->query($sqlQuery); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Static query; the only variable is the new site's table prefix.
 	
 	//make the blog public
-	$wpdb->query( $wpdb->prepare( "UPDATE $wpdb->blogs SET public = 1 WHERE blog_id = %d LIMIT 1", $blog_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time update on site creation.
+	// update_blog_status() also syncs the site's blog_public option and clears the site cache.
+	update_blog_status( $blog_id, 'public', 1 );
 	
 	//add some other categories		
 	/*
