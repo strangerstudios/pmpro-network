@@ -600,7 +600,7 @@ function pmpron_after_all_membership_level_changes( $old_user_levels ) {
 				do_action( 'activate_blog', $blog_id );
 			} else {		
 				// Otherwise, let's deactivate this blog as long as it's not an admin site.
-				if ( ! user_can( 'manage_network', $user_id ) ) {
+				if ( ! user_can( $user_id, 'manage_network' ) ) {
 					do_action( 'deactivate_blog', $blog_id );
 					update_blog_status( $blog_id, 'deleted', '1' );			
 				}
@@ -644,7 +644,7 @@ function pmpron_pmpro_after_change_membership_level($level_id, $user_id)
 		else
 		{		
 			//don't deactivate admin sites
-			if(!user_can("manage_network", $user_id))
+			if(!user_can($user_id, "manage_network"))
 			{
 				//site credits < $n, so let's deactivate blogs from now on
 				do_action( 'deactivate_blog', $blog_id );
