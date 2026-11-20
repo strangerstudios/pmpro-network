@@ -469,7 +469,7 @@ function pmpron_pmpro_registration_checks($pmpro_continue_registration)
 			return true;	
 		}
 	} else {
-		//error message shown below
+		pmpro_setMessage( __( 'Please enter a Site Name and Site Title.', 'pmpro-network' ), 'pmpro_error' );
 		return false;
 	}
 }
